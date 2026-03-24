@@ -28,10 +28,19 @@ const envSchema = z.object({
   MPESA_SHORTCODE: z.string().default(""),
   MPESA_PASSKEY: z.string().default(""),
   MPESA_CALLBACK_URL: z.string().default(""),
+  FLUTTERWAVE_PUBLIC_KEY: z.string().default(""),
+  FLUTTERWAVE_SECRET_KEY: z.string().default(""),
+  FLUTTERWAVE_CALLBACK_URL: z.string().default(""),
 });
 
 export type Env = z.infer<typeof envSchema>;
 export type MpesaConfig = z.infer<typeof mpesaSchema>;
+
+export interface FlutterwaveConfig {
+  publicKey: string;
+  secretKey: string;
+  callbackUrl: string;
+}
 
 function loadEnv() {
   const result = envSchema.safeParse(process.env);
@@ -53,5 +62,10 @@ export const config = {
     shortcode: env.MPESA_SHORTCODE,
     passkey: env.MPESA_PASSKEY,
     callbackUrl: env.MPESA_CALLBACK_URL,
+  },
+  flutterwave: {
+    publicKey: env.FLUTTERWAVE_PUBLIC_KEY,
+    secretKey: env.FLUTTERWAVE_SECRET_KEY,
+    callbackUrl: env.FLUTTERWAVE_CALLBACK_URL,
   },
 };
