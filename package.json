@@ -10,16 +10,29 @@
     "test": "turbo test",
     "db:migrate": "pnpm --filter @kicksmtaani/db migrate",
     "db:seed": "pnpm --filter @kicksmtaani/db seed",
-    "db:studio": "pnpm --filter @kicksmtaani/db studio"
+    "db:studio": "pnpm --filter @kicksmtaani/db studio",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "turbo": "^2.0.0",
-    "typescript": "^5.4.0",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "eslint": "^8.57.0",
-    "prettier": "^3.2.0"
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.2.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=20"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }
