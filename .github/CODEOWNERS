@@ -1,0 +1,5 @@
+# Code Owners
+* @error302
+
+# Require PR review for main
+.github/CODEOWNERS @error302
