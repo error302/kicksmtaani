@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+const mpesaSchema = z.object({
+  consumerKey: z.string().min(1, "MPESA_CONSUMER_KEY is required"),
+  consumerSecret: z.string().min(1, "MPESA_CONSUMER_SECRET is required"),
+  shortcode: z.string().min(1, "MPESA_SHORTCODE is required"),
+  passkey: z.string().min(1, "MPESA_PASSKEY is required"),
+  callbackUrl: z.string().url("MPESA_CALLBACK_URL must be a valid URL"),
+});
+
 const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "production", "test"])
@@ -15,9 +23,15 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
   MEILISEARCH_URL: z.string().default("http://localhost:7700"),
   MEILISEARCH_KEY: z.string().default("masterKey"),
+  MPESA_CONSUMER_KEY: z.string().default(""),
+  MPESA_CONSUMER_SECRET: z.string().default(""),
+  MPESA_SHORTCODE: z.string().default(""),
+  MPESA_PASSKEY: z.string().default(""),
+  MPESA_CALLBACK_URL: z.string().default(""),
 });
 
 export type Env = z.infer<typeof envSchema>;
+export type MpesaConfig = z.infer<typeof mpesaSchema>;
 
 function loadEnv() {
   const result = envSchema.safeParse(process.env);
@@ -31,3 +45,13 @@ function loadEnv() {
 }
 
 export const env = loadEnv();
+
+export const config = {
+  mpesa: {
+    consumerKey: env.MPESA_CONSUMER_KEY,
+    consumerSecret: env.MPESA_CONSUMER_SECRET,
+    shortcode: env.MPESA_SHORTCODE,
+    passkey: env.MPESA_PASSKEY,
+    callbackUrl: env.MPESA_CALLBACK_URL,
+  },
+};
