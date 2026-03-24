@@ -1,10 +1,10 @@
-import express from "express";
+import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import { errorHandler } from "./middleware/errorHandler";
 
-export const app = express();
+export const app: Application = express();
 
 app.use(helmet());
 app.use(cors());
