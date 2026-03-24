@@ -31,6 +31,11 @@ const envSchema = z.object({
   FLUTTERWAVE_PUBLIC_KEY: z.string().default(""),
   FLUTTERWAVE_SECRET_KEY: z.string().default(""),
   FLUTTERWAVE_CALLBACK_URL: z.string().default(""),
+  AFRICASTALKING_API_KEY: z.string().default(""),
+  SMTP_HOST: z.string().default(""),
+  SMTP_PORT: z.string().default(""),
+  SMTP_USER: z.string().default(""),
+  SMTP_PASS: z.string().default(""),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -40,6 +45,17 @@ export interface FlutterwaveConfig {
   publicKey: string;
   secretKey: string;
   callbackUrl: string;
+}
+
+export interface AfricaTalkingConfig {
+  apiKey: string;
+}
+
+export interface SmtpConfig {
+  host: string;
+  port: string;
+  user: string;
+  pass: string;
 }
 
 function loadEnv() {
@@ -67,5 +83,14 @@ export const config = {
     publicKey: env.FLUTTERWAVE_PUBLIC_KEY,
     secretKey: env.FLUTTERWAVE_SECRET_KEY,
     callbackUrl: env.FLUTTERWAVE_CALLBACK_URL,
+  },
+  africasTalking: {
+    apiKey: env.AFRICASTALKING_API_KEY,
+  },
+  smtp: {
+    host: env.SMTP_HOST,
+    port: env.SMTP_PORT,
+    user: env.SMTP_USER,
+    pass: env.SMTP_PASS,
   },
 };
