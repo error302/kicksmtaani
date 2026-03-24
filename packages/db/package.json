@@ -1,0 +1,32 @@
+{
+  "name": "@kicksmtaani/db",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    ".prisma/client": ".prisma/client/index.js"
+  },
+  "scripts": {
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx src/seed.ts",
+    "build": "prisma generate",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.12.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.12.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  },
+  "prisma": {
+    "seed": "tsx src/seed.ts"
+  }
+}
