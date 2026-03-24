@@ -1,0 +1,14 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm@9.0.0 && pnpm install --frozen-lockfile
+
+COPY . .
+
+RUN pnpm --filter @kicksmtaani/web build
+
+EXPOSE 3000
+
+CMD ["pnpm", "--filter", "@kicksmtaani/web", "dev"]
