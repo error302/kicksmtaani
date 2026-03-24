@@ -33,6 +33,8 @@ export function authenticate(
   }
 }
 
+export const requireAdmin = requireRole("ADMIN", "SUPERADMIN");
+
 export function requireRole(...roles: string[]) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
