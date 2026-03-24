@@ -12,6 +12,7 @@ router.post(
   asyncHandler(authController.register),
 );
 router.post("/login", authRateLimiter, asyncHandler(authController.login));
+router.post("/refresh", asyncHandler(authController.refresh));
 router.post("/logout", authenticate, asyncHandler(authController.logout));
 router.get("/me", authenticate, asyncHandler(authController.getProfile));
 
