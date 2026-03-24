@@ -9,6 +9,7 @@ import { generalRateLimiter } from "./middleware/rateLimit";
 import authRoutes from "./modules/auth/routes";
 import productRoutes from "./modules/products/routes";
 import orderRoutes from "./modules/orders/routes";
+import paymentRoutes from "./modules/payments/routes";
 import { logger } from "./lib/logger";
 import { initMeilisearch } from "./lib/meilisearch";
 
@@ -43,6 +44,7 @@ app.get("/health", (_req, res) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1", paymentRoutes);
 
 // Initialize Meilisearch
 initMeilisearch().catch((err) =>
