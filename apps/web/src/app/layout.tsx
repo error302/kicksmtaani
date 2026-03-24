@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/lib/providers";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { CartSidebar } from "@/components/cart/CartSidebar";
 
 export const metadata: Metadata = {
   title: "KicksMtaani - Premium Shoes in Kenya",
@@ -16,7 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+          <CartSidebar />
+        </Providers>
       </body>
     </html>
   );
