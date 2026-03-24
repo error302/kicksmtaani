@@ -1,5 +1,5 @@
 import axios from "axios";
-import { config } from "../../../config/index.js";
+import { config } from "../../config/index.js";
 
 const AT_API_URL = "https://api.africastalking.com/version1/messaging";
 
