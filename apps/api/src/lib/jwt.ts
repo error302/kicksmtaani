@@ -8,15 +8,13 @@ export interface TokenPayload {
 }
 
 export function generateAccessToken(payload: TokenPayload): string {
-  return jwt.sign(payload, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN,
-  });
+  return jwt.sign(payload, env.JWT_SECRET, { expiresIn: "15m" }) as string;
 }
 
 export function generateRefreshToken(payload: TokenPayload): string {
   return jwt.sign(payload, env.JWT_REFRESH_SECRET, {
-    expiresIn: env.JWT_REFRESH_EXPIRES_IN,
-  });
+    expiresIn: "7d",
+  }) as string;
 }
 
 export function verifyAccessToken(token: string): TokenPayload {

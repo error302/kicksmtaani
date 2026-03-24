@@ -46,7 +46,9 @@ export async function createOrder(
       include: { product: true },
     });
 
-    const price = variant?.priceOverride || variant?.product.basePrice || 0;
+    const price = Number(
+      variant?.priceOverride || variant?.product.basePrice || 0,
+    );
     totalAmount += price * item.quantity;
     orderItems.push({
       variantId: item.variantId,

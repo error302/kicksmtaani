@@ -6,11 +6,12 @@ export interface RequestWithId extends Request {
 }
 
 export function requestIdMiddleware(
-  req: RequestWithId,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  req.id = (req.headers["x-request-id"] as string) || uuidv4();
-  res.setHeader("x-request-id", req.id);
+  (req as RequestWithId).id =
+    (req.headers["x-request-id"] as string) || uuidv4();
+  res.setHeader("x-request-id", (req as RequestWithId).id);
   next();
 }

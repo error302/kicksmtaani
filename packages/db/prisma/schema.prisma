@@ -45,7 +45,7 @@ enum PaymentProvider {
 }
 
 model User {
-  id            String    @id @default(gen_random_uuid()) @db.Uuid
+  id            String    @id @default(uuid()) @db.Uuid
   email         String    @unique
   phone         String    @unique
   passwordHash  String    @map("password_hash")
@@ -61,7 +61,7 @@ model User {
 }
 
 model Product {
-  id          String         @id @default(gen_random_uuid()) @db.Uuid
+  id          String         @id @default(uuid()) @db.Uuid
   name        String
   slug        String         @unique
   description String?        @db.Text
@@ -82,7 +82,7 @@ model Product {
 }
 
 model ProductVariant {
-  id            String    @id @default(gen_random_uuid()) @db.Uuid
+  id            String    @id @default(uuid()) @db.Uuid
   productId     String    @map("product_id") @db.Uuid
   size          String
   color         String?
@@ -101,7 +101,7 @@ model ProductVariant {
 }
 
 model Order {
-  id              String      @id @default(gen_random_uuid()) @db.Uuid
+  id              String      @id @default(uuid()) @db.Uuid
   orderNumber     String      @unique @map("order_number")
   userId          String?     @map("user_id") @db.Uuid
   status          OrderStatus @default(PENDING)
@@ -121,7 +121,7 @@ model Order {
 }
 
 model OrderItem {
-  id        String   @id @default(gen_random_uuid()) @db.Uuid
+  id        String   @id @default(uuid()) @db.Uuid
   orderId   String   @map("order_id") @db.Uuid
   variantId String   @map("variant_id") @db.Uuid
   quantity  Int
@@ -136,7 +136,7 @@ model OrderItem {
 }
 
 model Payment {
-  id           String         @id @default(gen_random_uuid()) @db.Uuid
+  id           String         @id @default(uuid()) @db.Uuid
   orderId      String         @map("order_id") @db.Uuid
   provider     PaymentProvider
   providerRef  String?        @map("provider_ref")
