@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KicksMtaani — Full Production Blueprint</title>
+<style>
+  :root {
+    --red: #DC2626; --red-dark: #991B1B; --red-light: #FEF2F2;
+    --black: #0F0F0F; --gray-900: #111827; --gray-800: #1F2937;
+    --gray-700: #374151; --gray-600: #4B5563; --gray-500: #6B7280;
+    --gray-400: #9CA3AF; --gray-300: #D1D5DB; --gray-200: #E5E7EB;
+    --gray-100: #F3F4F6; --gray-50: #F9FAFB; --white: #FFFFFF;
+    --green: #16A34A; --green-light: #F0FDF4;
+    --blue: #2563EB; --blue-light: #EFF6FF;
+    --amber: #D97706; --amber-light: #FFFBEB;
+    --purple: #7C3AED; --purple-light: #F5F3FF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-900); font-size: 14px; line-height: 1.6; }
+
+  /* HEADER */
+  .hero { background: var(--black); color: white; padding: 48px 32px 36px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; background: var(--red); border-radius: 50%; opacity: 0.08; }
+  .hero::after { content: ''; position: absolute; bottom: -40px; left: 20%; width: 200px; height: 200px; background: white; border-radius: 50%; opacity: 0.03; }
+  .hero-tag { display: inline-block; background: var(--red); color: white; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 4px; margin-bottom: 16px; }
+  .hero h1 { font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+  .hero h1 span { color: var(--red); }
+  .hero p { color: #9CA3AF; font-size: 15px; max-width: 560px; }
+  .hero-meta { display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
+  .hero-meta div { display: flex; flex-direction: column; }
+  .hero-meta .label { font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 1px; }
+  .hero-meta .val { font-size: 14px; font-weight: 600; color: white; }
+
+  /* NAV TABS */
+  .nav-tabs { background: white; border-bottom: 1px solid var(--gray-200); display: flex; overflow-x: auto; gap: 0; padding: 0 24px; position: sticky; top: 0; z-index: 100; }
+  .tab-btn { padding: 14px 18px; font-size: 13px; font-weight: 500; color: var(--gray-500); border: none; background: none; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .tab-btn:hover { color: var(--gray-900); }
+  .tab-btn.active { color: var(--red); border-bottom-color: var(--red); font-weight: 600; }
+
+  /* CONTENT */
+  .content { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* SECTION HEADER */
+  .sec-header { margin-bottom: 28px; }
+  .sec-tag { font-size: 11px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+  .sec-title { font-size: 24px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+  .sec-sub { color: var(--gray-500); font-size: 14px; }
+
+  /* CARDS */
+  .card { background: white; border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; }
+  .card-header { font-size: 13px; font-weight: 700; color: var(--gray-900); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+  /* GRIDS */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media(max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+  /* PHASES */
+  .phase-card { background: white; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+  .phase-header { padding: 16px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: background 0.15s; }
+  .phase-header:hover { background: var(--gray-50); }
+  .phase-num { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: white; flex-shrink: 0; }
+  .phase-info h3 { font-size: 15px; font-weight: 700; }
+  .phase-info p { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .phase-badge { margin-left: auto; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+  .phase-body { padding: 0 20px 20px; border-top: 1px solid var(--gray-100); }
+  .phase-body.collapsed { display: none; }
+
+  /* TASK LIST */
+  .task-list { list-style: none; margin-top: 16px; }
+  .task-list li { padding: 8px 0; border-bottom: 1px solid var(--gray-100); display: flex; align-items: flex-start; gap: 10px; font-size: 13px; }
+  .task-list li:last-child { border-bottom: none; }
+  .task-check { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; margin-top: 1px; }
+
+  /* TECH STACK */
+  .tech-item { padding: 14px; border: 1px solid var(--gray-200); border-radius: 8px; background: white; }
+  .tech-item .name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .tech-item .role { font-size: 12px; color: var(--gray-500); margin-bottom: 8px; }
+  .tech-item .why { font-size: 12px; color: var(--gray-700); line-height: 1.5; }
+  .tech-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; margin-bottom: 6px; }
+
+  /* CODE BLOCKS */
+  .code-block { background: var(--gray-900); border-radius: 8px; padding: 16px; margin: 12px 0; overflow-x: auto; }
+  .code-block pre { font-family: 'Consolas', 'Monaco', monospace; font-size: 12px; color: #E5E7EB; line-height: 1.7; white-space: pre; }
+  .code-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .kw { color: #93C5FD; } .str { color: #86EFAC; } .cmt { color: #6B7280; } .fn { color: #FDE68A; } .type { color: #F9A8D4; }
+
+  /* SECURITY */
+  .sec-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+  .sec-item:last-child { border-bottom: none; }
+  .sec-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--red-light); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .sec-info h4 { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .sec-info p { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 11px; top: 8px; bottom: 8px; width: 2px; background: var(--gray-200); }
+  .tl-item { position: relative; margin-bottom: 24px; }
+  .tl-dot { position: absolute; left: -32px; top: 2px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; }
+  .tl-item h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .tl-item p { font-size: 12px; color: var(--gray-500); }
+
+  /* DB TABLES */
+  .db-table { background: white; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+  .db-table-header { background: var(--gray-900); color: white; padding: 10px 16px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .db-table-body { padding: 0; }
+  .db-row { display: grid; grid-template-columns: 160px 100px 1fr; padding: 8px 16px; border-bottom: 1px solid var(--gray-100); font-size: 12px; }
+  .db-row:last-child { border-bottom: none; }
+  .db-row.header { background: var(--gray-50); font-weight: 700; font-size: 11px; color: var(--gray-500); text-transform: uppercase; }
+  .db-key { font-family: monospace; color: var(--red); font-weight: 600; }
+  .db-type { color: var(--blue); font-family: monospace; }
+
+  /* BADGES */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-red { background: var(--red-light); color: var(--red-dark); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+
+  /* METRICS */
+  .metric-card { background: white; border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px; text-align: center; }
+  .metric-num { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+  .metric-label { font-size: 12px; color: var(--gray-500); }
+
+  /* DIVIDERS */
+  .divider { height: 1px; background: var(--gray-200); margin: 24px 0; }
+  .sub-heading { font-size: 14px; font-weight: 700; color: var(--gray-900); margin: 20px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--gray-200); }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; }
+  .checklist li { display: flex; gap: 10px; padding: 6px 0; font-size: 13px; align-items: flex-start; }
+  .check-y { color: var(--green); font-weight: 700; }
+  .check-n { color: var(--red); font-weight: 700; }
+
+  /* API ENDPOINT */
+  .endpoint { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 6px; margin-bottom: 8px; background: white; }
+  .method { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; font-family: monospace; }
+  .method-get { background: #DCFCE7; color: #15803D; }
+  .method-post { background: #DBEAFE; color: #1D4ED8; }
+  .method-put { background: #FEF3C7; color: #92400E; }
+  .method-del { background: #FEE2E2; color: #B91C1C; }
+  .endpoint-path { font-family: monospace; font-size: 12px; color: var(--gray-700); }
+  .endpoint-desc { font-size: 12px; color: var(--gray-500); margin-left: auto; }
+
+  /* MPESA */
+  .flow-step { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+  .flow-step:last-child { border-bottom: none; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--red); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; }
+  .step-text h4 { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .step-text p { font-size: 12px; color: var(--gray-500); }
+
+  /* FOOTER */
+  .footer { background: var(--gray-900); color: var(--gray-400); text-align: center; padding: 24px; margin-top: 48px; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-tag">Full Production Blueprint v1.0</div>
+  <h1>Kicks<span>Mtaani</span></h1>
+  <p>End-to-end technical blueprint — from repo initialization to your first paying customer. Every decision documented, every layer secured.</p>
+  <div class="hero-meta">
+    <div><span class="label">Target Market</span><span class="val">Kenya (Mombasa + Nairobi)</span></div>
+    <div><span class="label">Timeline</span><span class="val">8 Weeks to Launch</span></div>
+    <div><span class="label">Tech Level</span><span class="val">Production Grade</span></div>
+    <div><span class="label">Payment</span><span class="val">M-Pesa + Card</span></div>
+    <div><span class="label">Stack</span><span class="val">Next.js + Node + PostgreSQL</span></div>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="showTab('overview')">📋 Overview</button>
+  <button class="tab-btn" onclick="showTab('stack')">🔧 Tech Stack</button>
+  <button class="tab-btn" onclick="showTab('architecture')">🏗️ Architecture</button>
+  <button class="tab-btn" onclick="showTab('phases')">📅 Phases</button>
+  <button class="tab-btn" onclick="showTab('database')">🗄️ Database</button>
+  <button class="tab-btn" onclick="showTab('api')">⚡ API Design</button>
+  <button class="tab-btn" onclick="showTab('security')">🔒 Security</button>
+  <button class="tab-btn" onclick="showTab('payments')">💳 Payments</button>
+  <button class="tab-btn" onclick="showTab('devops')">🚀 DevOps / CI/CD</button>
+  <button class="tab-btn" onclick="showTab('quality')">✅ Code Quality</button>
+  <button class="tab-btn" onclick="showTab('launch')">🎯 Launch</button>
+</div>
+
+<div class="content">
+
+<!-- ============ OVERVIEW ============ -->
+<div id="overview" class="section active">
+  <div class="sec-header">
+    <div class="sec-tag">Section 1</div>
+    <div class="sec-title">Project Overview</div>
+    <div class="sec-sub">KicksMtaani is a multi-category family shoe e-commerce platform built for the East African market.</div>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:24px">
+    <div class="metric-card"><div class="metric-num" style="color:var(--red)">8</div><div class="metric-label">Weeks to First Customer</div></div>
+    <div class="metric-card"><div class="metric-num" style="color:var(--blue)">5</div><div class="metric-label">Development Phases</div></div>
+    <div class="metric-card"><div class="metric-num" style="color:var(--green)">4</div><div class="metric-label">Shoe Categories</div></div>
+    <div class="metric-card"><div class="metric-num" style="color:var(--purple)">2</div><div class="metric-label">Payment Methods</div></div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="card">
+      <div class="card-header"><div class="card-icon" style="background:#FEF2F2">🎯</div>Business Goals</div>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> Sell shoes online for Men, Women, Boys, Girls, Kids</li>
+        <li><span class="check-y">✓</span> Accept M-Pesa STK Push (Safaricom) payments</li>
+        <li><span class="check-y">✓</span> Accept card payments (Visa/Mastercard)</li>
+        <li><span class="check-y">✓</span> Manage inventory, sizes, and variants</li>
+        <li><span class="check-y">✓</span> Admin dashboard to manage orders</li>
+        <li><span class="check-y">✓</span> Mobile-first — most Kenyans shop on phone</li>
+        <li><span class="check-y">✓</span> WhatsApp order notifications to customer</li>
+        <li><span class="check-y">✓</span> SEO-ready for Google KE search traffic</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon" style="background:#EFF6FF">📐</div>System Requirements</div>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> Page load under 2 seconds on 3G</li>
+        <li><span class="check-y">✓</span> Support 500 concurrent users at launch</li>
+        <li><span class="check-y">✓</span> 99.9% uptime SLA target</li>
+        <li><span class="check-y">✓</span> Zero PCI-DSS scope via Stripe/Flutterwave tokenization</li>
+        <li><span class="check-y">✓</span> GDPR + Kenya Data Protection Act compliant</li>
+        <li><span class="check-y">✓</span> Automated backups every 6 hours</li>
+        <li><span class="check-y">✓</span> Image optimization (WebP, CDN delivery)</li>
+        <li><span class="check-y">✓</span> SSL/TLS everywhere, HSTS preloaded</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-icon" style="background:#F0FDF4">🗺️</div>Project Directory Structure</div>
+    <div class="code-block">
+      <div class="code-label">kicksmtaani/ — monorepo</div>
+      <pre>
+kicksmtaani/
+├── apps/
+│   ├── web/                    <span class="cmt"># Next.js 14 storefront (customer facing)</span>
+│   │   ├── app/                <span class="cmt"># App router pages</span>
+│   │   ├── components/         <span class="cmt"># React UI components</span>
+│   │   ├── lib/                <span class="cmt"># Utilities, hooks, helpers</span>
+│   │   └── public/             <span class="cmt"># Static assets</span>
+│   ├── admin/                  <span class="cmt"># Next.js admin dashboard</span>
+│   └── api/                    <span class="cmt"># Node.js / Express REST API</span>
+│       ├── src/
+│       │   ├── modules/        <span class="cmt"># Feature modules (products, orders, etc.)</span>
+│       │   ├── middleware/      <span class="cmt"># Auth, rate-limit, validation</span>
+│       │   ├── services/        <span class="cmt"># Business logic layer</span>
+│       │   ├── repositories/    <span class="cmt"># Database queries</span>
+│       │   └── utils/           <span class="cmt"># Shared utilities</span>
+│       └── tests/              <span class="cmt"># Unit + integration tests</span>
+├── packages/
+│   ├── db/                     <span class="cmt"># Prisma schema + migrations</span>
+│   ├── types/                  <span class="cmt"># Shared TypeScript types</span>
+│   └── config/                 <span class="cmt"># Shared ESLint, Prettier, TS config</span>
+├── infrastructure/
+│   ├── docker/                 <span class="cmt"># Dockerfiles per service</span>
+│   ├── nginx/                  <span class="cmt"># Reverse proxy config</span>
+│   └── terraform/              <span class="cmt"># IaC for cloud resources</span>
+├── .github/workflows/          <span class="cmt"># CI/CD pipelines</span>
+├── docker-compose.yml          <span class="cmt"># Local dev environment</span>
+└── turbo.json                  <span class="cmt"># Turborepo build orchestration</span>
+</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TECH STACK ============ -->
+<div id="stack" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 2</div>
+    <div class="sec-title">Technology Stack</div>
+    <div class="sec-sub">Every tool chosen for performance, developer experience, security, and East African market conditions.</div>
+  </div>
+
+  <div class="sub-heading">🖥️ Frontend</div>
+  <div class="grid-3" style="margin-bottom:24px">
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#EFF6FF;color:#2563EB">FRAMEWORK</div>
+      <div class="name">Next.js 14 (App Router)</div>
+      <div class="role">Customer Storefront</div>
+      <div class="why">Server-side rendering for SEO, image optimization built-in, API routes, edge caching. Best for e-commerce.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#F5F3FF;color:#7C3AED">LANGUAGE</div>
+      <div class="name">TypeScript 5.x</div>
+      <div class="role">All Code (Frontend + Backend)</div>
+      <div class="why">Type safety catches bugs at compile time, not production. Shared types between frontend and API.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#ECFDF5;color:#059669">STYLING</div>
+      <div class="name">Tailwind CSS + shadcn/ui</div>
+      <div class="role">UI Design System</div>
+      <div class="why">Utility-first CSS, production-purged. shadcn for accessible components. Fast to build professional UI.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#FFF7ED;color:#C2410C">STATE</div>
+      <div class="name">Zustand + React Query</div>
+      <div class="role">Client State + Server State</div>
+      <div class="why">Zustand for cart/auth state. React Query for API caching, optimistic updates, and background refetch.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#FDF2F8;color:#BE185D">FORMS</div>
+      <div class="name">React Hook Form + Zod</div>
+      <div class="role">Forms + Validation</div>
+      <div class="why">Zero re-renders on input. Zod schemas shared with backend for identical validation rules.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#F0FDF4;color:#15803D">IMAGES</div>
+      <div class="name">Cloudinary</div>
+      <div class="role">Image Storage + Optimization</div>
+      <div class="why">Auto WebP conversion, responsive sizes, CDN delivery globally. Shoe photos load fast on any connection.</div>
+    </div>
+  </div>
+
+  <div class="sub-heading">⚙️ Backend</div>
+  <div class="grid-3" style="margin-bottom:24px">
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#EFF6FF;color:#2563EB">RUNTIME</div>
+      <div class="name">Node.js 20 LTS + Express</div>
+      <div class="role">REST API Server</div>
+      <div class="why">Fast, mature ecosystem. LTS = security patches guaranteed. Same language as frontend = full-stack TypeScript.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#FEF2F2;color:#DC2626">DATABASE</div>
+      <div class="name">PostgreSQL 16</div>
+      <div class="role">Primary Database</div>
+      <div class="why">ACID-compliant for financial transactions. JSON support for flexible product attributes. Industry standard for e-commerce.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#ECFDF5;color:#059669">ORM</div>
+      <div class="name">Prisma ORM</div>
+      <div class="role">Database Layer</div>
+      <div class="why">Type-safe queries, auto migrations, connection pooling. Schema is version-controlled. Prevents SQL injection by design.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#FFFBEB;color:#B45309">CACHE</div>
+      <div class="name">Redis</div>
+      <div class="role">Sessions + Cache + Queues</div>
+      <div class="why">Cart sessions, product cache, rate limiting store. BullMQ on Redis for email/SMS job queues.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#F5F3FF;color:#7C3AED">SEARCH</div>
+      <div class="name">Meilisearch</div>
+      <div class="role">Product Search</div>
+      <div class="why">Blazing fast full-text search with typo tolerance. Customers can search "adidass" and still find Adidas.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#FDF2F8;color:#BE185D">AUTH</div>
+      <div class="name">JWT + Refresh Tokens</div>
+      <div class="role">Authentication</div>
+      <div class="why">Stateless access tokens (15min expiry) + long-lived refresh tokens stored in httpOnly cookies. Secure pattern.</div>
+    </div>
+  </div>
+
+  <div class="sub-heading">☁️ Infrastructure & DevOps</div>
+  <div class="grid-3">
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#EFF6FF;color:#2563EB">HOSTING</div>
+      <div class="name">Railway / Render</div>
+      <div class="role">API + Database Hosting</div>
+      <div class="why">Affordable for East Africa budgets. Auto-deploy from GitHub. Managed Postgres + Redis included. Scales as you grow.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#ECFDF5;color:#059669">FRONTEND CDN</div>
+      <div class="name">Vercel</div>
+      <div class="role">Next.js Deployment</div>
+      <div class="why">Zero-config Next.js deployment. Edge network near Nairobi. Free SSL, preview deployments for every PR.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#FFFBEB;color:#B45309">MONOREPO</div>
+      <div class="name">Turborepo</div>
+      <div class="role">Build System</div>
+      <div class="why">Parallel builds, smart caching. Web + Admin + API in one repo. Shared packages stay in sync automatically.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#F5F3FF;color:#7C3AED">CI/CD</div>
+      <div class="name">GitHub Actions</div>
+      <div class="role">Automation Pipeline</div>
+      <div class="why">Lint → Test → Build → Deploy on every push. Free for public repos, affordable for private. Integrates everything.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#FEF2F2;color:#DC2626">CONTAINERS</div>
+      <div class="name">Docker + Docker Compose</div>
+      <div class="role">Local Dev Environment</div>
+      <div class="why">One command starts your entire stack locally: Next.js + API + Postgres + Redis + Meilisearch. Matches production exactly.</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-tag" style="background:#FDF2F8;color:#BE185D">MONITORING</div>
+      <div class="name">Sentry + Uptime Robot</div>
+      <div class="role">Error Tracking + Uptime</div>
+      <div class="why">Sentry captures every crash with full stack trace. Uptime Robot alerts you (WhatsApp/SMS) if site goes down.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARCHITECTURE ============ -->
+<div id="architecture" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 3</div>
+    <div class="sec-title">System Architecture</div>
+    <div class="sec-sub">How all the pieces connect — from customer browser to payment confirmation.</div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">🌐 Request Flow — Customer Places an Order</div>
+    <div style="padding-top:8px">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><h4>Customer visits kicksmtaani.co.ke</h4><p>Browser hits Vercel Edge CDN → Next.js serves SSR page with product data. Page load &lt;2s even on 3G.</p></div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><h4>Browse + Add to Cart</h4><p>Cart state managed in Zustand (localStorage-persisted). User selects size, category (Men/Women/Kids), quantity.</p></div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><h4>Checkout — Login or Guest</h4><p>JWT auth flow. Guest checkout allowed (email + phone required). Session stored in Redis for cart recovery.</p></div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><h4>Payment Selection</h4><p>M-Pesa STK Push (phone number → Safaricom prompt) OR Card via Flutterwave. Flutterwave also supports M-Pesa.</p></div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">5</div>
+        <div class="step-text"><h4>Order Created (Atomic Transaction)</h4><p>PostgreSQL transaction: decrement inventory → create order → create payment_intent. Either all succeed or all roll back.</p></div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">6</div>
+        <div class="step-text"><h4>Payment Webhook Received</h4><p>Safaricom/Flutterwave POSTs to /api/webhooks/mpesa. Webhook verified with HMAC signature. Order status → CONFIRMED.</p></div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">7</div>
+        <div class="step-text"><h4>Notifications Fired</h4><p>BullMQ job queue sends: SMS confirmation to customer, WhatsApp message, email receipt. Admin gets Slack notification.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">🔄 Service Communication</div>
+      <div class="code-block">
+        <pre>
+<span class="cmt">// All inter-service calls are typed</span>
+<span class="cmt">// Customer Browser</span>
+    ↓ HTTPS
+<span class="cmt">// Vercel Edge (Next.js SSR)</span>
+    ↓ Internal HTTP
+<span class="cmt">// Node.js API (Railway)</span>
+    ↓ Prisma TCP
+<span class="cmt">// PostgreSQL (Railway Managed)</span>
+    ↓ ioredis
+<span class="cmt">// Redis (Railway Managed)</span>
+
+<span class="cmt">// External calls:</span>
+<span class="cmt">// API → Flutterwave (payments)</span>
+<span class="cmt">// API → Africa's Talking (SMS)</span>
+<span class="cmt">// API → Cloudinary (images)</span>
+<span class="cmt">// API → Meilisearch (search index)</span>
+</pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">🔐 Authentication Architecture</div>
+      <div class="code-block">
+        <pre>
+<span class="cmt">// Token Strategy</span>
+Access Token:
+  - JWT, signed HS256
+  - Expiry: 15 minutes
+  - Payload: userId, role, email
+  - Stored: memory (no localStorage)
+
+Refresh Token:
+  - 32-byte random hex
+  - Expiry: 7 days
+  - Stored: httpOnly cookie
+  - Hashed in DB (bcrypt)
+
+<span class="cmt">// Rotation on every refresh</span>
+<span class="cmt">// Revoked on logout / password change</span>
+<span class="cmt">// Device fingerprinting for anomaly detect</span>
+
+Roles:
+  CUSTOMER | ADMIN | SUPERADMIN
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PHASES ============ -->
+<div id="phases" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 4</div>
+    <div class="sec-title">Development Phases</div>
+    <div class="sec-sub">8 weeks from Day 1 to your first paying customer. Click each phase to expand.</div>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="phase-card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--red)">1</div>
+      <div class="phase-info"><h3>Foundation & Setup</h3><p>Week 1 — Repo, tooling, environment, CI skeleton</p></div>
+      <span class="phase-badge" style="background:#FEF2F2;color:#DC2626">Week 1</span>
+    </div>
+    <div class="phase-body collapsed">
+      <ul class="task-list">
+        <li><div class="task-check" style="background:var(--red)">✓</div><div><strong>Initialize monorepo</strong> — pnpm workspaces + Turborepo. Run: <code>npx create-turbo@latest kicksmtaani</code></div></li>
+        <li><div class="task-check" style="background:var(--red)">✓</div><div><strong>Configure TypeScript</strong> — strict mode, path aliases, shared tsconfig in packages/config</div></li>
+        <li><div class="task-check" style="background:var(--red)">✓</div><div><strong>Set up ESLint + Prettier</strong> — shared config, pre-commit hooks via husky + lint-staged</div></li>
+        <li><div class="task-check" style="background:var(--red)">✓</div><div><strong>Docker Compose</strong> — PostgreSQL, Redis, Meilisearch containers for local dev</div></li>
+        <li><div class="task-check" style="background:var(--red)">✓</div><div><strong>Environment variables</strong> — .env.example committed, .env in .gitignore, Zod env validation at startup</div></li>
+        <li><div class="task-check" style="background:var(--red)">✓</div><div><strong>GitHub Actions</strong> — skeleton CI pipeline: lint → typecheck → test on every PR</div></li>
+        <li><div class="task-check" style="background:var(--red)">✓</div><div><strong>Prisma setup</strong> — init schema, first migration, seed script with sample products</div></li>
+        <li><div class="task-check" style="background:var(--red)">✓</div><div><strong>Branch protection</strong> — main branch: require PR, require status checks, no force push</div></li>
+        <li><div class="task-check" style="background:var(--red)">✓</div><div><strong>Commit conventions</strong> — Conventional Commits enforced via commitlint: feat:, fix:, chore:, docs:</div></li>
+      </ul>
+      <div class="code-block" style="margin-top:16px">
+        <div class="code-label">Day 1 Commands</div>
+        <pre>
+<span class="cmt"># Clone and setup</span>
+git clone git@github.com:yourorg/kicksmtaani.git
+cd kicksmtaani
+pnpm install
+
+<span class="cmt"># Start local environment</span>
+docker-compose up -d
+pnpm db:migrate
+pnpm db:seed
+
+<span class="cmt"># Start all services</span>
+pnpm dev   <span class="cmt"># starts web:3000, admin:3001, api:4000</span>
+</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="phase-card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--blue)">2</div>
+      <div class="phase-info"><h3>Core API + Database</h3><p>Weeks 2–3 — All backend models, CRUD, auth, middleware</p></div>
+      <span class="phase-badge" style="background:#EFF6FF;color:#2563EB">Weeks 2–3</span>
+    </div>
+    <div class="phase-body collapsed">
+      <ul class="task-list">
+        <li><div class="task-check" style="background:var(--blue)">✓</div><div><strong>Full database schema</strong> — Users, Products, Variants, Categories, Orders, OrderItems, Payments, Reviews, Addresses</div></li>
+        <li><div class="task-check" style="background:var(--blue)">✓</div><div><strong>Authentication module</strong> — Register, Login, Refresh, Logout, Forgot/Reset password with email OTP</div></li>
+        <li><div class="task-check" style="background:var(--blue)">✓</div><div><strong>Products module</strong> — CRUD with size variants, category filtering (Men/Women/Boys/Girls/Kids), stock tracking</div></li>
+        <li><div class="task-check" style="background:var(--blue)">✓</div><div><strong>Orders module</strong> — Create order, atomic stock decrement, order status machine (PENDING→CONFIRMED→SHIPPED→DELIVERED)</div></li>
+        <li><div class="task-check" style="background:var(--blue)">✓</div><div><strong>Input validation</strong> — Zod schemas on every route, global error handler middleware</div></li>
+        <li><div class="task-check" style="background:var(--blue)">✓</div><div><strong>Rate limiting</strong> — express-rate-limit: 100 req/15min general, 5 req/15min auth endpoints</div></li>
+        <li><div class="task-check" style="background:var(--blue)">✓</div><div><strong>Logging</strong> — Winston structured JSON logs, request ID tracing via UUID, Morgan HTTP logger</div></li>
+        <li><div class="task-check" style="background:var(--blue)">✓</div><div><strong>Unit tests</strong> — Jest, aim for 80%+ coverage on services and repositories</div></li>
+        <li><div class="task-check" style="background:var(--blue)">✓</div><div><strong>Meilisearch sync</strong> — Index products on create/update, search endpoint with filters</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="phase-card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--green)">3</div>
+      <div class="phase-info"><h3>Storefront (Frontend)</h3><p>Weeks 3–5 — Customer-facing Next.js shop, all pages</p></div>
+      <span class="phase-badge" style="background:#F0FDF4;color:#16A34A">Weeks 3–5</span>
+    </div>
+    <div class="phase-body collapsed">
+      <ul class="task-list">
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>Homepage</strong> — Hero banner, featured categories (Men/Women/Boys/Girls/Kids), new arrivals, deals section</div></li>
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>Category pages</strong> — Filtered product grid, size filter, price range, sort by (newest/price/popular)</div></li>
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>Product detail page</strong> — Image gallery (Cloudinary), size picker, add to cart, related products</div></li>
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>Cart (slide-over)</strong> — Zustand state, localStorage persistence, quantity control, subtotal</div></li>
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>Checkout flow</strong> — 3 steps: Details → Payment → Confirmation. Guest checkout + registered user.</div></li>
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>Search page</strong> — Meilisearch integration, instant results, category and price filters</div></li>
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>Auth pages</strong> — Register, Login, Forgot Password. Redirect flows handled correctly.</div></li>
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>Account dashboard</strong> — Order history, track order, profile edit, address book</div></li>
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>Mobile-first responsive</strong> — All pages tested on 375px (iPhone SE), 390px (iPhone 14), 428px (iPhone 14 Pro Max)</div></li>
+        <li><div class="task-check" style="background:var(--green)">✓</div><div><strong>SEO</strong> — Dynamic meta tags, OpenGraph, sitemap.xml, robots.txt, structured data (JSON-LD Product schema)</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Phase 4 -->
+  <div class="phase-card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--purple)">4</div>
+      <div class="phase-info"><h3>Payments + Admin Dashboard</h3><p>Weeks 5–7 — M-Pesa, card payments, order management</p></div>
+      <span class="phase-badge" style="background:#F5F3FF;color:#7C3AED">Weeks 5–7</span>
+    </div>
+    <div class="phase-body collapsed">
+      <ul class="task-list">
+        <li><div class="task-check" style="background:var(--purple)">✓</div><div><strong>M-Pesa STK Push</strong> — Safaricom Daraja API v2: Lipa Na M-Pesa Online. STK Push → callback → order confirm</div></li>
+        <li><div class="task-check" style="background:var(--purple)">✓</div><div><strong>Card payments</strong> — Flutterwave integration (supports Kenya cards + M-Pesa as backup). PCI-safe tokenization.</div></li>
+        <li><div class="task-check" style="background:var(--purple)">✓</div><div><strong>Webhook security</strong> — HMAC-SHA256 signature verification on all payment callbacks. Replay attack prevention.</div></li>
+        <li><div class="task-check" style="background:var(--purple)">✓</div><div><strong>Refund handling</strong> — Initiate refunds via API. Refund status tracked in payments table.</div></li>
+        <li><div class="task-check" style="background:var(--purple)">✓</div><div><strong>Admin dashboard</strong> — Next.js admin app: orders list, order detail, order status update, products CRUD</div></li>
+        <li><div class="task-check" style="background:var(--purple)">✓</div><div><strong>Inventory management</strong> — Stock levels, low-stock alerts, bulk import via CSV</div></li>
+        <li><div class="task-check" style="background:var(--purple)">✓</div><div><strong>SMS notifications</strong> — Africa's Talking API: "Your order KM-001 confirmed! Delivery in 2–3 days." to customer phone.</div></li>
+        <li><div class="task-check" style="background:var(--purple)">✓</div><div><strong>Email notifications</strong> — Resend/Nodemailer: order receipt, shipping update, delivery confirmation. HTML templates.</div></li>
+        <li><div class="task-check" style="background:var(--purple)">✓</div><div><strong>Analytics</strong> — Basic: total sales, orders/day, top products, revenue by category. Chart.js charts in admin.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Phase 5 -->
+  <div class="phase-card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--amber)">5</div>
+      <div class="phase-info"><h3>Testing, Hardening & Launch</h3><p>Week 8 — Security audit, load test, go live</p></div>
+      <span class="phase-badge" style="background:#FFFBEB;color:#D97706">Week 8</span>
+    </div>
+    <div class="phase-body collapsed">
+      <ul class="task-list">
+        <li><div class="task-check" style="background:var(--amber)">✓</div><div><strong>Security audit</strong> — OWASP Top 10 checklist, dependency audit (npm audit), secrets scanning</div></li>
+        <li><div class="task-check" style="background:var(--amber)">✓</div><div><strong>Load testing</strong> — k6 script: 100 concurrent users, checkout flow. Verify DB connection pool holds.</div></li>
+        <li><div class="task-check" style="background:var(--amber)">✓</div><div><strong>E2E tests</strong> — Playwright: full checkout journey, M-Pesa mock, order confirmation</div></li>
+        <li><div class="task-check" style="background:var(--amber)">✓</div><div><strong>Performance audit</strong> — Lighthouse CI: LCP &lt;2.5s, CLS &lt;0.1, FID &lt;100ms</div></li>
+        <li><div class="task-check" style="background:var(--amber)">✓</div><div><strong>DNS + domain</strong> — Point kicksmtaani.co.ke to Vercel. SSL auto-provisioned. www redirect.</div></li>
+        <li><div class="task-check" style="background:var(--amber)">✓</div><div><strong>Database backups</strong> — pg_dump daily to Cloudflare R2. Test restore procedure.</div></li>
+        <li><div class="task-check" style="background:var(--amber)">✓</div><div><strong>Soft launch</strong> — Share with 10 trusted friends/family. Take real first orders. Monitor Sentry for errors.</div></li>
+        <li><div class="task-check" style="background:var(--amber)">✓</div><div><strong>🎉 Public launch</strong> — Social media announcement, WhatsApp groups, first Google Ads campaign</div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DATABASE ============ -->
+<div id="database" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 5</div>
+    <div class="sec-title">Database Schema</div>
+    <div class="sec-sub">PostgreSQL schema designed for multi-category shoes with size variants and order management.</div>
+  </div>
+
+  <div class="db-table">
+    <div class="db-table-header">👤 users</div>
+    <div class="db-table-body">
+      <div class="db-row header"><div>Column</div><div>Type</div><div>Notes</div></div>
+      <div class="db-row"><div class="db-key">id</div><div class="db-type">UUID PK</div><div>Default gen_random_uuid()</div></div>
+      <div class="db-row"><div>email</div><div class="db-type">TEXT</div><div>Unique, lowercased, indexed</div></div>
+      <div class="db-row"><div>phone</div><div class="db-type">TEXT</div><div>Kenyan format +2547XXXXXXXX, unique</div></div>
+      <div class="db-row"><div>password_hash</div><div class="db-type">TEXT</div><div>bcrypt, 12 rounds, never returned in API</div></div>
+      <div class="db-row"><div>full_name</div><div class="db-type">TEXT</div><div></div></div>
+      <div class="db-row"><div>role</div><div class="db-type">ENUM</div><div>CUSTOMER | ADMIN | SUPERADMIN</div></div>
+      <div class="db-row"><div>email_verified</div><div class="db-type">BOOLEAN</div><div>Default false</div></div>
+      <div class="db-row"><div>created_at</div><div class="db-type">TIMESTAMP</div><div>Default now(), indexed</div></div>
+    </div>
+  </div>
+
+  <div class="db-table">
+    <div class="db-table-header">👟 products</div>
+    <div class="db-table-body">
+      <div class="db-row header"><div>Column</div><div>Type</div><div>Notes</div></div>
+      <div class="db-row"><div class="db-key">id</div><div class="db-type">UUID PK</div><div></div></div>
+      <div class="db-row"><div>name</div><div class="db-type">TEXT</div><div>Product name, max 200 chars</div></div>
+      <div class="db-row"><div>slug</div><div class="db-type">TEXT</div><div>URL-friendly, unique, auto-generated</div></div>
+      <div class="db-row"><div>description</div><div class="db-type">TEXT</div><div>Full product description</div></div>
+      <div class="db-row"><div>category</div><div class="db-type">ENUM</div><div>MEN | WOMEN | BOYS | GIRLS | KIDS</div></div>
+      <div class="db-row"><div>brand</div><div class="db-type">TEXT</div><div>Nike, Adidas, Bata, etc.</div></div>
+      <div class="db-row"><div>base_price</div><div class="db-type">DECIMAL</div><div>In KES (Kenya Shillings), never in cents</div></div>
+      <div class="db-row"><div>images</div><div class="db-type">TEXT[]</div><div>Array of Cloudinary URLs</div></div>
+      <div class="db-row"><div>is_active</div><div class="db-type">BOOLEAN</div><div>Soft delete / unpublish without losing data</div></div>
+      <div class="db-row"><div>meta_title</div><div class="db-type">TEXT</div><div>SEO title tag override</div></div>
+      <div class="db-row"><div>search_vector</div><div class="db-type">TSVECTOR</div><div>Full-text search index, auto-updated trigger</div></div>
+    </div>
+  </div>
+
+  <div class="db-table">
+    <div class="db-table-header">📦 product_variants — Sizes & Stock</div>
+    <div class="db-table-body">
+      <div class="db-row header"><div>Column</div><div>Type</div><div>Notes</div></div>
+      <div class="db-row"><div class="db-key">id</div><div class="db-type">UUID PK</div><div></div></div>
+      <div class="db-row"><div class="db-key">product_id</div><div class="db-type">UUID FK</div><div>→ products.id, CASCADE delete</div></div>
+      <div class="db-row"><div>size</div><div class="db-type">TEXT</div><div>EU/UK sizes: "38", "39", "10", "11" etc.</div></div>
+      <div class="db-row"><div>color</div><div class="db-type">TEXT</div><div>Optional color variant</div></div>
+      <div class="db-row"><div>sku</div><div class="db-type">TEXT</div><div>Unique stock keeping unit</div></div>
+      <div class="db-row"><div>stock_qty</div><div class="db-type">INTEGER</div><div>Current stock. Min 0. Updated atomically.</div></div>
+      <div class="db-row"><div>price_override</div><div class="db-type">DECIMAL</div><div>Optional per-variant price. NULL = use base_price.</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="db-table">
+      <div class="db-table-header">🛒 orders</div>
+      <div class="db-table-body">
+        <div class="db-row header"><div>Column</div><div>Type</div><div>Notes</div></div>
+        <div class="db-row"><div class="db-key">id</div><div class="db-type">UUID PK</div><div></div></div>
+        <div class="db-row"><div>order_number</div><div class="db-type">TEXT</div><div>KM-00001, auto-increment</div></div>
+        <div class="db-row"><div class="db-key">user_id</div><div class="db-type">UUID FK</div><div>Nullable (guest checkout)</div></div>
+        <div class="db-row"><div>status</div><div class="db-type">ENUM</div><div>PENDING|CONFIRMED|SHIPPED|DELIVERED|CANCELLED|REFUNDED</div></div>
+        <div class="db-row"><div>total_amount</div><div class="db-type">DECIMAL</div><div>Total in KES</div></div>
+        <div class="db-row"><div>delivery_address</div><div class="db-type">JSONB</div><div>{name, phone, area, city, notes}</div></div>
+        <div class="db-row"><div>created_at</div><div class="db-type">TIMESTAMP</div><div>Indexed for reporting</div></div>
+      </div>
+    </div>
+    <div class="db-table">
+      <div class="db-table-header">💳 payments</div>
+      <div class="db-table-body">
+        <div class="db-row header"><div>Column</div><div>Type</div><div>Notes</div></div>
+        <div class="db-row"><div class="db-key">id</div><div class="db-type">UUID PK</div><div></div></div>
+        <div class="db-row"><div class="db-key">order_id</div><div class="db-type">UUID FK</div><div>→ orders.id</div></div>
+        <div class="db-row"><div>provider</div><div class="db-type">ENUM</div><div>MPESA | FLUTTERWAVE | CASH</div></div>
+        <div class="db-row"><div>provider_ref</div><div class="db-type">TEXT</div><div>M-Pesa receipt / Flutterwave txn ID</div></div>
+        <div class="db-row"><div>amount</div><div class="db-type">DECIMAL</div><div>In KES</div></div>
+        <div class="db-row"><div>status</div><div class="db-type">ENUM</div><div>PENDING|SUCCESS|FAILED|REFUNDED</div></div>
+        <div class="db-row"><div>phone_number</div><div class="db-type">TEXT</div><div>M-Pesa phone used</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-header">⚡ Key Database Rules</div>
+    <ul class="checklist">
+      <li><span class="check-y">✓</span> All monetary values stored as DECIMAL(12,2) — never FLOAT (floating point rounding kills money calculations)</li>
+      <li><span class="check-y">✓</span> Stock decrements use SELECT FOR UPDATE to prevent race conditions on concurrent purchases</li>
+      <li><span class="check-y">✓</span> Soft deletes on products (is_active=false) — never DELETE rows that have order history</li>
+      <li><span class="check-y">✓</span> All timestamps in UTC. Display conversion happens in the frontend.</li>
+      <li><span class="check-y">✓</span> UUID primary keys — prevents enumeration attacks, scales to multiple DB shards</li>
+      <li><span class="check-y">✓</span> Indexes on: user_id, category, status, created_at, slug — all common query columns</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ API ============ -->
+<div id="api" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 6</div>
+    <div class="sec-title">API Design</div>
+    <div class="sec-sub">RESTful API with consistent conventions, versioning, and clear error codes.</div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header">📐 API Conventions</div>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> Base URL: <code>/api/v1/</code> — versioning from day 1</li>
+        <li><span class="check-y">✓</span> All responses: <code>{ success, data, meta, error }</code></li>
+        <li><span class="check-y">✓</span> Pagination: <code>?page=1&limit=20</code></li>
+        <li><span class="check-y">✓</span> Dates in ISO 8601: <code>2025-01-15T10:30:00Z</code></li>
+        <li><span class="check-y">✓</span> Errors include <code>code</code> + <code>field</code> for form validation</li>
+        <li><span class="check-y">✓</span> HTTP status codes used correctly (200/201/400/401/403/404/422/500)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-header">📦 Standard Response Shape</div>
+      <div class="code-block">
+        <pre>
+<span class="cmt">// Success</span>
+{ <span class="str">"success"</span>: <span class="kw">true</span>,
+  <span class="str">"data"</span>: { ... },
+  <span class="str">"meta"</span>: { <span class="str">"page"</span>: 1, <span class="str">"total"</span>: 48 } }
+
+<span class="cmt">// Error</span>
+{ <span class="str">"success"</span>: <span class="kw">false</span>,
+  <span class="str">"error"</span>: {
+    <span class="str">"code"</span>: <span class="str">"VALIDATION_ERROR"</span>,
+    <span class="str">"message"</span>: <span class="str">"Size is required"</span>,
+    <span class="str">"field"</span>: <span class="str">"size"</span>
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-heading">🔑 Authentication Endpoints</div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/auth/register</span><span class="endpoint-desc">Create account (email, phone, password)</span></div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/auth/login</span><span class="endpoint-desc">Login → access token + httpOnly cookie</span></div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/auth/refresh</span><span class="endpoint-desc">Get new access token using refresh cookie</span></div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/auth/logout</span><span class="endpoint-desc">Revoke refresh token, clear cookie</span></div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/auth/forgot-password</span><span class="endpoint-desc">Send OTP to email/phone</span></div>
+
+  <div class="sub-heading">👟 Product Endpoints</div>
+  <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/v1/products</span><span class="endpoint-desc">List products (filter: category, brand, size, price)</span></div>
+  <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/v1/products/:slug</span><span class="endpoint-desc">Single product with all variants</span></div>
+  <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/v1/products/search?q=</span><span class="endpoint-desc">Full-text search via Meilisearch</span></div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/products</span><span class="endpoint-desc">Create product [ADMIN]</span></div>
+  <div class="endpoint"><span class="method method-put">PUT</span><span class="endpoint-path">/api/v1/products/:id</span><span class="endpoint-desc">Update product [ADMIN]</span></div>
+
+  <div class="sub-heading">🛒 Order Endpoints</div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/orders</span><span class="endpoint-desc">Create order (validates stock, creates payment intent)</span></div>
+  <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/v1/orders/:id</span><span class="endpoint-desc">Get order detail (owner or admin only)</span></div>
+  <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/v1/orders</span><span class="endpoint-desc">List my orders [AUTH] or all orders [ADMIN]</span></div>
+  <div class="endpoint"><span class="method method-put">PUT</span><span class="endpoint-path">/api/v1/orders/:id/status</span><span class="endpoint-desc">Update order status [ADMIN]</span></div>
+
+  <div class="sub-heading">💳 Payment Endpoints</div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/payments/mpesa/stk-push</span><span class="endpoint-desc">Initiate M-Pesa STK Push to customer phone</span></div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/webhooks/mpesa</span><span class="endpoint-desc">Safaricom callback (public, HMAC verified)</span></div>
+  <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/v1/webhooks/flutterwave</span><span class="endpoint-desc">Flutterwave callback (public, secret verified)</span></div>
+</div>
+
+<!-- ============ SECURITY ============ -->
+<div id="security" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 7</div>
+    <div class="sec-title">Security Architecture</div>
+    <div class="sec-sub">OWASP Top 10 addressed. Every attack vector defended. Security is not an afterthought.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">🛡️ API Security</div>
+      <div class="sec-item"><div class="sec-icon">🔐</div><div class="sec-info"><h4>JWT + HttpOnly Cookies</h4><p>Access tokens in memory only. Refresh tokens in httpOnly, Secure, SameSite=Strict cookies. XSS cannot steal tokens.</p></div></div>
+      <div class="sec-item"><div class="sec-icon">🚦</div><div class="sec-info"><h4>Rate Limiting</h4><p>express-rate-limit per IP. Auth routes: 5 req/15min. General: 100 req/15min. Redis-backed for multi-instance accuracy.</p></div></div>
+      <div class="sec-item"><div class="sec-icon">🧹</div><div class="sec-info"><h4>Input Validation</h4><p>Every request body validated with Zod. SQL injection impossible with Prisma parameterized queries. No raw SQL.</p></div></div>
+      <div class="sec-item"><div class="sec-icon">🪖</div><div class="sec-info"><h4>Helmet.js</h4><p>Sets 15+ security HTTP headers: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy.</p></div></div>
+      <div class="sec-item"><div class="sec-icon">🌐</div><div class="sec-info"><h4>CORS</h4><p>Strict allowlist: only kicksmtaani.co.ke and admin.kicksmtaani.co.ke. No wildcard origins in production.</p></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">🔒 Data Security</div>
+      <div class="sec-item"><div class="sec-icon">🔑</div><div class="sec-info"><h4>Password Hashing</h4><p>bcrypt with 12 rounds. Never store plain text. Never log passwords. Never return password_hash in API responses.</p></div></div>
+      <div class="sec-item"><div class="sec-icon">🔏</div><div class="sec-info"><h4>Secrets Management</h4><p>All secrets in environment variables. Never in code or git. Use Railway/Vercel secret injection. Rotate on breach.</p></div></div>
+      <div class="sec-item"><div class="sec-icon">📊</div><div class="sec-info"><h4>Audit Logging</h4><p>All admin actions logged: who, what, when, IP. Immutable audit_log table. Helps detect insider threats.</p></div></div>
+      <div class="sec-item"><div class="sec-icon">💾</div><div class="sec-info"><h4>Database Security</h4><p>API uses least-privilege DB user (no DROP/CREATE). DB not publicly accessible. SSL-only connections. Regular backups.</p></div></div>
+      <div class="sec-item"><div class="sec-icon">🪝</div><div class="sec-info"><h4>Webhook Verification</h4><p>Every M-Pesa/Flutterwave callback verified with HMAC-SHA256. Prevents fake payment confirmations.</p></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="card-header">⚙️ Security Middleware Order (Express)</div>
+    <div class="code-block">
+      <pre>
+<span class="cmt">// Apply in this EXACT order — order matters</span>
+app.<span class="fn">use</span>(helmet())                    <span class="cmt">// 1. Security headers FIRST</span>
+app.<span class="fn">use</span>(cors(corsOptions))           <span class="cmt">// 2. CORS allowlist</span>
+app.<span class="fn">use</span>(express.<span class="fn">json</span>({ limit: <span class="str">'10kb'</span> }))  <span class="cmt">// 3. Body limit (prevent huge payload attacks)</span>
+app.<span class="fn">use</span>(globalRateLimit)             <span class="cmt">// 4. General rate limiting</span>
+app.<span class="fn">use</span>(requestIdMiddleware)         <span class="cmt">// 5. Attach unique request ID for tracing</span>
+app.<span class="fn">use</span>(sanitizeMiddleware)          <span class="cmt">// 6. Strip HTML from string inputs</span>
+app.<span class="fn">use</span>(morgan(<span class="str">'combined'</span>, { stream: logger })) <span class="cmt">// 7. HTTP request logging</span>
+app.<span class="fn">use</span>(<span class="str">'/api'</span>, routes)              <span class="cmt">// 8. Routes AFTER all middleware</span>
+app.<span class="fn">use</span>(globalErrorHandler)          <span class="cmt">// 9. Error handler LAST</span>
+</pre>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-header">🔍 OWASP Top 10 Checklist</div>
+    <div class="grid-2">
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> A01 Broken Access Control — Role checks on every admin route</li>
+        <li><span class="check-y">✓</span> A02 Cryptographic Failures — bcrypt passwords, HTTPS everywhere, encrypted backups</li>
+        <li><span class="check-y">✓</span> A03 Injection — Prisma parameterized queries, Zod input validation</li>
+        <li><span class="check-y">✓</span> A04 Insecure Design — Threat modeling done, order flow designed securely</li>
+        <li><span class="check-y">✓</span> A05 Security Misconfiguration — Helmet.js, no debug mode in prod, remove default routes</li>
+      </ul>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> A06 Vulnerable Components — npm audit in CI, Dependabot alerts enabled</li>
+        <li><span class="check-y">✓</span> A07 Auth Failures — Account lockout after 5 attempts, secure session management</li>
+        <li><span class="check-y">✓</span> A08 Software Integrity — Lockfile committed, CI verifies checksums</li>
+        <li><span class="check-y">✓</span> A09 Logging Failures — Winston structured logs, all errors captured in Sentry</li>
+        <li><span class="check-y">✓</span> A10 SSRF — No user-supplied URLs fetched server-side without allowlist</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAYMENTS ============ -->
+<div id="payments" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 8</div>
+    <div class="sec-title">Payment Integration</div>
+    <div class="sec-sub">M-Pesa STK Push + Flutterwave card payments. The cornerstone of KicksMtaani's revenue.</div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card" style="border-left:4px solid #15803D">
+      <div class="card-header" style="color:var(--green)">📱 M-Pesa (Safaricom Daraja API)</div>
+      <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">Primary payment — 70%+ of Kenyan online shoppers use M-Pesa. STK Push sends payment prompt directly to customer's phone.</p>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> Lipa Na M-Pesa Online (STK Push)</li>
+        <li><span class="check-y">✓</span> C2B (Customer to Business) payments</li>
+        <li><span class="check-y">✓</span> Transaction query for status checks</li>
+        <li><span class="check-y">✓</span> Reversal API for refunds</li>
+        <li><span class="check-y">✓</span> Daraja v2 OAuth token management</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left:4px solid #F97316">
+      <div class="card-header" style="color:#EA580C">💳 Flutterwave</div>
+      <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">Secondary — accepts Visa, Mastercard, M-Pesa, and 200+ payment methods across Africa. PCI-DSS Level 1 compliant.</p>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> Hosted payment modal (no card data touches server)</li>
+        <li><span class="check-y">✓</span> Supports KES currency natively</li>
+        <li><span class="check-y">✓</span> Webhook signature verification</li>
+        <li><span class="check-y">✓</span> Refund API</li>
+        <li><span class="check-y">✓</span> Free tier covers early-stage volumes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">📲 M-Pesa STK Push Flow (Step by Step)</div>
+    <div class="flow-step"><div class="step-num">1</div><div class="step-text"><h4>Customer clicks "Pay with M-Pesa"</h4><p>Enters phone number (07XX or 01XX). Frontend sends to POST /api/v1/payments/mpesa/stk-push</p></div></div>
+    <div class="flow-step"><div class="step-num">2</div><div class="step-text"><h4>Server gets OAuth token from Safaricom</h4><p>Calls Daraja /oauth/v1/generate?grant_type=client_credentials with Base64(ConsumerKey:ConsumerSecret). Token cached in Redis for 55 min.</p></div></div>
+    <div class="flow-step"><div class="step-num">3</div><div class="step-text"><h4>Server sends STK Push request</h4><p>POST to mpesa.safaricom.co.ke/mpesa/stkpush/v1/processrequest with BusinessShortCode, Timestamp, Password (SHA256 hash), Amount, PartyB, CallBackURL.</p></div></div>
+    <div class="flow-step"><div class="step-num">4</div><div class="step-text"><h4>Customer sees popup on their phone</h4><p>"KicksMtaani is requesting KES 2,500 from your M-Pesa account." Customer enters M-Pesa PIN.</p></div></div>
+    <div class="flow-step"><div class="step-num">5</div><div class="step-text"><h4>Safaricom POSTs callback to our server</h4><p>Hits /api/v1/webhooks/mpesa. Server verifies callback, extracts ResultCode, MpesaReceiptNumber, Amount, TransactionDate.</p></div></div>
+    <div class="flow-step"><div class="step-num">6</div><div class="step-text"><h4>Order confirmed if ResultCode === 0</h4><p>PostgreSQL transaction: payment status → SUCCESS, order status → CONFIRMED. SMS + email fired via BullMQ queue.</p></div></div>
+    <div class="flow-step"><div class="step-num">7</div><div class="step-text"><h4>Polling fallback (if callback delayed)</h4><p>Frontend polls GET /api/v1/orders/:id/payment-status every 3 seconds for up to 90 seconds. Shows real-time status to customer.</p></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">💻 M-Pesa STK Push Code Example</div>
+    <div class="code-block">
+      <pre>
+<span class="cmt">// services/mpesa.service.ts</span>
+<span class="kw">export async function</span> <span class="fn">initiateSTKPush</span>(params: {
+  phone: <span class="type">string</span>, amount: <span class="type">number</span>, orderId: <span class="type">string</span>
+}) {
+  <span class="kw">const</span> token = <span class="kw">await</span> <span class="fn">getMpesaToken</span>();
+  <span class="kw">const</span> timestamp = <span class="fn">getMpesaTimestamp</span>(); <span class="cmt">// YYYYMMDDHHmmss</span>
+  <span class="kw">const</span> password = <span class="fn">Buffer.from</span>(
+    `${process.env.MPESA_SHORTCODE}${process.env.MPESA_PASSKEY}${timestamp}`
+  ).<span class="fn">toString</span>(<span class="str">'base64'</span>);
+
+  <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(MPESA_STK_URL, {
+    method: <span class="str">'POST'</span>,
+    headers: { Authorization: `Bearer ${token}` },
+    body: <span class="fn">JSON.stringify</span>({
+      BusinessShortCode: process.env.MPESA_SHORTCODE,
+      Password: password, Timestamp: timestamp,
+      TransactionType: <span class="str">'CustomerPayBillOnline'</span>,
+      Amount: <span class="fn">Math.ceil</span>(amount),  <span class="cmt">// M-Pesa needs integer</span>
+      PartyA: <span class="fn">formatPhone</span>(params.phone), <span class="cmt">// 2547XXXXXXXX</span>
+      PartyB: process.env.MPESA_SHORTCODE,
+      PhoneNumber: <span class="fn">formatPhone</span>(params.phone),
+      CallBackURL: `${process.env.API_URL}/api/v1/webhooks/mpesa`,
+      AccountReference: `KM-${params.orderId.slice(0,8)}`,
+      TransactionDesc: <span class="str">'KicksMtaani Order'</span>
+    })
+  });
+
+  <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">PaymentError</span>(<span class="str">'STK push failed'</span>);
+  <span class="kw">return</span> res.<span class="fn">json</span>();
+}
+</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DEVOPS ============ -->
+<div id="devops" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 9</div>
+    <div class="sec-title">DevOps & CI/CD Pipeline</div>
+    <div class="sec-sub">Automated pipeline: every push to main is tested, built, and deployed without manual work.</div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">⚡ GitHub Actions Pipeline</div>
+    <div class="code-block">
+      <div class="code-label">.github/workflows/ci-cd.yml</div>
+      <pre>
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  <span class="fn">quality</span>:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint          <span class="cmt"># ESLint all packages</span>
+      - run: pnpm typecheck      <span class="cmt"># TypeScript strict check</span>
+      - run: pnpm format:check   <span class="cmt"># Prettier check</span>
+
+  <span class="fn">test</span>:
+    name: Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_DB: kicksmtaani_test, POSTGRES_PASSWORD: test }
+      redis:
+        image: redis:7
+    steps:
+      - uses: actions/checkout@v4
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:migrate:test   <span class="cmt"># Run migrations on test DB</span>
+      - run: pnpm test:unit         <span class="cmt"># Jest unit tests</span>
+      - run: pnpm test:integration  <span class="cmt"># Integration tests against test DB</span>
+      - run: pnpm test:e2e          <span class="cmt"># Playwright E2E (only on main)</span>
+
+  <span class="fn">build</span>:
+    needs: [quality, test]
+    runs-on: ubuntu-latest
+    steps:
+      - run: pnpm build   <span class="cmt"># Turborepo parallel build</span>
+
+  <span class="fn">deploy</span>:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - run: vercel deploy --prod    <span class="cmt"># Deploy web to Vercel</span>
+      - run: railway up              <span class="cmt"># Deploy API to Railway</span>
+</pre>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">🌍 Environment Strategy</div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot" style="background:var(--gray-400)">L</div><h4>Local (Docker Compose)</h4><p>Full stack runs locally. Mirrors production. M-Pesa sandbox credentials.</p></div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--blue)">D</div><h4>Development (dev branch)</h4><p>Auto-deployed on push to develop. PR previews for frontend on Vercel.</p></div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--amber)">S</div><h4>Staging (staging branch)</h4><p>Production-identical. Real data snapshot. Final QA before launch.</p></div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--green)">P</div><h4>Production (main branch)</h4><p>kicksmtaani.co.ke. Real M-Pesa credentials. Monitored 24/7.</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">📦 Deployment Stack</div>
+      <ul class="task-list">
+        <li><div class="task-check" style="background:var(--black)">▲</div><div><strong>Vercel</strong> — Next.js web + admin. Zero downtime deploys. Edge CDN.</div></li>
+        <li><div class="task-check" style="background:#7C3AED">R</div><div><strong>Railway</strong> — Node.js API + PostgreSQL + Redis. Managed, auto-restart, metrics dashboard.</div></li>
+        <li><div class="task-check" style="background:var(--amber)">☁</div><div><strong>Cloudflare</strong> — DNS, DDoS protection, R2 for backups, caching rules.</div></li>
+        <li><div class="task-check" style="background:#E5550A">C</div><div><strong>Cloudinary</strong> — Product image CDN. Auto WebP, responsive sizes.</div></li>
+        <li><div class="task-check" style="background:var(--red)">S</div><div><strong>Sentry</strong> — Error monitoring. Alert on new errors in Slack/WhatsApp.</div></li>
+        <li><div class="task-check" style="background:var(--green)">U</div><div><strong>Uptime Robot</strong> — Ping every 5 min. SMS alert if site goes down.</div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CODE QUALITY ============ -->
+<div id="quality" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 10</div>
+    <div class="sec-title">Code Quality Practices</div>
+    <div class="sec-sub">The standards that keep the codebase maintainable as the team and product grow.</div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header">📏 Linting & Formatting</div>
+      <div class="code-block">
+        <div class="code-label">.eslintrc.js (shared)</div>
+        <pre>
+<span class="kw">module</span>.exports = {
+  extends: [
+    <span class="str">'next/core-web-vitals'</span>,
+    <span class="str">'plugin:@typescript-eslint/recommended'</span>,
+    <span class="str">'plugin:security/recommended'</span>,  <span class="cmt">// security rules</span>
+    <span class="str">'prettier'</span>  <span class="cmt">// disable ESLint formatting</span>
+  ],
+  rules: {
+    <span class="str">'@typescript-eslint/no-explicit-any'</span>: <span class="str">'error'</span>,
+    <span class="str">'@typescript-eslint/no-unused-vars'</span>: <span class="str">'error'</span>,
+    <span class="str">'no-console'</span>: [<span class="str">'warn'</span>, { allow: [<span class="str">'warn'</span>,<span class="str">'error'</span>] }],
+    <span class="str">'security/detect-object-injection'</span>: <span class="str">'warn'</span>
+  }
+};
+</pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">🧪 Testing Strategy</div>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> <strong>Unit tests (Jest)</strong> — Business logic, validators, utils. Target 80%+ coverage.</li>
+        <li><span class="check-y">✓</span> <strong>Integration tests</strong> — API endpoints hit real test DB. Order flow, auth flow, payment webhooks.</li>
+        <li><span class="check-y">✓</span> <strong>E2E tests (Playwright)</strong> — Full browser: browse → cart → checkout → confirmation.</li>
+        <li><span class="check-y">✓</span> <strong>Load tests (k6)</strong> — 100 virtual users, checkout scenario. Catches N+1 queries.</li>
+        <li><span class="check-y">✓</span> <strong>Test naming</strong> — <code>describe('OrderService') → it('should decrement stock atomically')</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header">🏛️ Code Architecture Principles</div>
+    <div class="grid-2">
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> <strong>Repository pattern</strong> — DB queries in /repositories, not scattered in controllers</li>
+        <li><span class="check-y">✓</span> <strong>Service layer</strong> — Business logic in /services. Controllers just handle HTTP, delegate to services.</li>
+        <li><span class="check-y">✓</span> <strong>DTO validation</strong> — Zod schemas as DTOs. Validate at the boundary (controller), trust inside.</li>
+        <li><span class="check-y">✓</span> <strong>Error hierarchy</strong> — Custom error classes: AppError → ValidationError → AuthError → NotFoundError</li>
+      </ul>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> <strong>No magic numbers</strong> — Constants in /constants/index.ts: ORDER_STATUS, ROLES, LIMITS</li>
+        <li><span class="check-y">✓</span> <strong>Async/await everywhere</strong> — No callback hell. Unhandled promise rejections treated as errors.</li>
+        <li><span class="check-y">✓</span> <strong>Single responsibility</strong> — Each function does ONE thing. Max 50 lines per function.</li>
+        <li><span class="check-y">✓</span> <strong>Semantic commits</strong> — feat: add size filter / fix: prevent negative stock / chore: update deps</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">🔄 Pull Request Checklist (Every PR)</div>
+    <div class="grid-2">
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> TypeScript compiles with no errors</li>
+        <li><span class="check-y">✓</span> ESLint passes with zero warnings</li>
+        <li><span class="check-y">✓</span> All tests pass (unit + integration)</li>
+        <li><span class="check-y">✓</span> New code has tests written</li>
+        <li><span class="check-y">✓</span> No secrets or API keys in code</li>
+      </ul>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> DB migrations are backward-compatible</li>
+        <li><span class="check-y">✓</span> API changes documented</li>
+        <li><span class="check-y">✓</span> Lighthouse score maintained or improved</li>
+        <li><span class="check-y">✓</span> npm audit shows no high/critical vulns</li>
+        <li><span class="check-y">✓</span> PR description explains WHAT and WHY</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LAUNCH ============ -->
+<div id="launch" class="section">
+  <div class="sec-header">
+    <div class="sec-tag">Section 11</div>
+    <div class="sec-title">Launch Checklist & First Customer</div>
+    <div class="sec-sub">Everything to verify before going live. Run this the day before launch.</div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header">🔧 Technical Pre-Launch</div>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> kicksmtaani.co.ke DNS pointing to Vercel</li>
+        <li><span class="check-y">✓</span> SSL certificate active (HTTPS green lock)</li>
+        <li><span class="check-y">✓</span> All env variables set in Railway + Vercel</li>
+        <li><span class="check-y">✓</span> M-Pesa credentials switched to production</li>
+        <li><span class="check-y">✓</span> Flutterwave switched to live mode</li>
+        <li><span class="check-y">✓</span> Test full purchase with real KES (even KES 1)</li>
+        <li><span class="check-y">✓</span> Sentry receiving errors correctly</li>
+        <li><span class="check-y">✓</span> Uptime Robot pinging and alerting</li>
+        <li><span class="check-y">✓</span> DB backup running and tested restore</li>
+        <li><span class="check-y">✓</span> Robots.txt allows indexing (not blocked)</li>
+        <li><span class="check-y">✓</span> Google Analytics / Search Console set up</li>
+        <li><span class="check-y">✓</span> Sitemap.xml submitted to Google</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-header">📱 Business Pre-Launch</div>
+      <ul class="checklist">
+        <li><span class="check-y">✓</span> At least 10 products loaded with real photos</li>
+        <li><span class="check-y">✓</span> Product descriptions written (50+ words each)</li>
+        <li><span class="check-y">✓</span> Delivery policy page written</li>
+        <li><span class="check-y">✓</span> Return/refund policy page written</li>
+        <li><span class="check-y">✓</span> Contact page with WhatsApp link</li>
+        <li><span class="check-y">✓</span> Instagram account created: @kicksmtaani</li>
+        <li><span class="check-y">✓</span> WhatsApp Business account set up</li>
+        <li><span class="check-y">✓</span> Facebook Business Page created</li>
+        <li><span class="check-y">✓</span> TikTok account created: @kicksmtaani</li>
+        <li><span class="check-y">✓</span> Pricing reviewed vs Mombasa market</li>
+        <li><span class="check-y">✓</span> Delivery partner identified (G4S, Sendy, or own)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;border-left:4px solid var(--green)">
+    <div class="card-header" style="color:var(--green)">🎯 Getting Your First Paying Customer</div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)">1</div><h4>Soft launch — WhatsApp family/friends</h4><p>"KicksMtaani is live! Shop shoes at kicksmtaani.co.ke. Free delivery in Mombasa for first 10 orders!" Share in 5+ WhatsApp groups.</p></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)">2</div><h4>Instagram + TikTok product videos</h4><p>Film 15-second videos: unbox shoes, show all angles, show checkout on phone. Use hashtags: #MombasaFashion #KenyaShoes #KicksMtaani</p></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)">3</div><h4>Facebook Marketplace listing</h4><p>List top 5 products on Facebook Marketplace — Mombasa location. Link to kicksmtaani.co.ke for checkout.</p></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)">4</div><h4>Google My Business</h4><p>Create "KicksMtaani" on Google Maps. Add website, WhatsApp, hours. Appears in "shoes shop Mombasa" searches.</p></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)">5</div><h4>First order — celebrate + document</h4><p>Screenshot the order notification. Post on social media. Thank the customer personally via WhatsApp. Ask for a review.</p></div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="metric-card">
+      <div class="metric-num" style="color:var(--red)">Week 1</div>
+      <div class="metric-label" style="margin-top:4px;font-size:13px">Target: 3–5 orders<br>Focus: friends & family</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num" style="color:var(--blue)">Month 1</div>
+      <div class="metric-label" style="margin-top:4px;font-size:13px">Target: 30–50 orders<br>Focus: social media</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num" style="color:var(--green)">Month 3</div>
+      <div class="metric-label" style="margin-top:4px;font-size:13px">Target: 150+ orders<br>Focus: Google Ads + SEO</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px;background:var(--gray-900);border:none">
+    <div style="color:white;font-size:16px;font-weight:700;margin-bottom:8px">🚀 You're Ready to Build.</div>
+    <p style="color:#9CA3AF;font-size:13px;line-height:1.7">This blueprint gives KicksMtaani a production-grade foundation: secure authentication, M-Pesa payments, full SEO, mobile-first design, automated deployment, and a clear path to your first customer. Every technical decision has been made with the Kenyan market, budget, and growth trajectory in mind.</p>
+    <p style="color:#6B7280;font-size:12px;margin-top:12px">Blueprint v1.0 · KicksMtaani · Built for Mombasa, Kenya 🇰🇪</p>
+  </div>
+</div>
+
+</div><!-- end content -->
+
+<div class="footer">KicksMtaani Production Blueprint · Confidential · &copy; 2025 KicksMtaani</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function togglePhase(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>
