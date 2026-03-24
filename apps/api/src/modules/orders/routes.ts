@@ -8,6 +8,11 @@ const router = Router();
 router.get("/", authenticate, asyncHandler(orderController.listOrders));
 router.get("/:id", authenticate, asyncHandler(orderController.getOrder));
 router.post("/", authenticate, asyncHandler(orderController.createOrder));
+router.post(
+  "/:id/pay",
+  authenticate,
+  asyncHandler(orderController.initiatePayment),
+);
 router.put(
   "/:id/status",
   authenticate,
