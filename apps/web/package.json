@@ -23,7 +23,8 @@
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.2.0",
     "zod": "^3.22.0",
-    "zustand": "^4.5.7"
+    "zustand": "^4.5.7",
+    "@sentry/nextjs": "^8.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
