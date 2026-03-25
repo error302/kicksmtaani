@@ -11,6 +11,7 @@ import {
 import { getProducts } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import ShaderAnimation from "@/components/ui/shader-animation";
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -87,24 +88,14 @@ export default function HomePage() {
 
   return (
     <div className="overflow-hidden">
-      {/* Hero Section - Animated */}
-      <section className="relative h-screen bg-black text-white overflow-hidden">
-        {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 animate-pulse-slow" />
-
-        {/* Floating Shapes */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-red-500/10 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float-delayed" />
-          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-float-slow" />
-        </div>
-
-        <div className="container mx-auto px-4 h-full flex items-center relative z-10">
+      {/* Hero Section - Shader Animated */}
+      <ShaderAnimation className="h-screen">
+        <div className="container mx-auto px-4 h-full flex items-center">
           <div className="grid md:grid-cols-2 gap-12 items-center w-full">
             {/* Left - Text */}
             <div className="space-y-8">
               <div className="overflow-hidden">
-                <h1 className="text-6xl md:text-8xl font-black tracking-tighter animate-slide-up">
+                <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white animate-slide-up">
                   {heroSlides[currentSlide].title.split("").map((char, i) => (
                     <span
                       key={i}
@@ -116,7 +107,7 @@ export default function HomePage() {
                   ))}
                 </h1>
               </div>
-              <p className="text-xl md:text-2xl text-gray-400 animate-fade-in">
+              <p className="text-xl md:text-2xl text-gray-300 animate-fade-in">
                 {heroSlides[currentSlide].subtitle}
               </p>
               <div className="flex items-center gap-6 animate-fade-in-delayed">
@@ -182,15 +173,15 @@ export default function HomePage() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-          <span className="text-xs text-gray-500 uppercase tracking-widest">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce z-20">
+          <span className="text-xs text-gray-400 uppercase tracking-widest">
             Scroll
           </span>
-          <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center">
+          <div className="w-6 h-10 border-2 border-gray-500 rounded-full flex justify-center">
             <div className="w-1 h-3 bg-white rounded-full mt-2 animate-scroll" />
           </div>
         </div>
-      </section>
+      </ShaderAnimation>
 
       {/* Marquee Brand Banner */}
       <section className="bg-gradient-to-r from-red-600 via-orange-500 to-red-600 py-4 overflow-hidden">
