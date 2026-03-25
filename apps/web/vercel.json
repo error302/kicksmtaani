@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd ../.. && turbo run build --filter=@kicksmtaani/web",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "installCommand": "cd ../.. && pnpm install"
+}
