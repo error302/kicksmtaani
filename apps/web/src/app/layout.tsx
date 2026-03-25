@@ -7,9 +7,33 @@ import { CartSidebar } from "@/components/cart/CartSidebar";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "KicksMtaani - Premium Shoes in Kenya",
+  title: {
+    default: "KicksMtaani - Premium Sneakers for Kenya",
+    template: "%s | KicksMtaani",
+  },
   description:
-    "Shop the best shoes for the whole family. Men, Women, Kids - Free delivery in Nairobi & Mombasa.",
+    "Shop premium Nike, Adidas, and more sneakers in Kenya. Free delivery in Nairobi & Mombasa. Authentic shoes for the whole family.",
+  keywords: [
+    "sneakers",
+    "shoes",
+    "Kenya",
+    "Nairobi",
+    "Nike",
+    "Adidas",
+    "KicksMtaani",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "en_KE",
+    siteName: "KicksMtaani",
+    title: "KicksMtaani - Premium Sneakers for Kenya",
+    description:
+      "Shop premium sneakers in Kenya. Free delivery in Nairobi & Mombasa.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

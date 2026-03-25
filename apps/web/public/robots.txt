@@ -5,4 +5,4 @@ Disallow: /account
 Disallow: /api
 Disallow: /checkout
 
-Sitemap: https://sneakroom.co.ke/sitemap.xml
+Sitemap: https://kicksmtaani.co.ke/sitemap.xml
