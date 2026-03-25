@@ -4,6 +4,7 @@ import { Providers } from "@/lib/providers";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartSidebar } from "@/components/cart/CartSidebar";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "KicksMtaani - Premium Shoes in Kenya",
@@ -24,6 +25,7 @@ export default function RootLayout({
           <main className="min-h-screen">{children}</main>
           <Footer />
           <CartSidebar />
+          <Toaster position="top-right" richColors />
         </Providers>
       </body>
     </html>

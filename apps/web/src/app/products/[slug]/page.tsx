@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProduct } from "@/lib/api";
 import { useCartStore } from "@/lib/store";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -26,7 +27,7 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (!selectedSize) {
-      alert("Please select a size");
+      toast.error("Please select a size");
       return;
     }
 
@@ -43,6 +44,7 @@ export default function ProductDetailPage() {
     });
 
     setCartOpen(true);
+    toast.success("Added to cart!");
   };
 
   return (

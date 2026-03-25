@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
 import { createOrder } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function CheckoutPage() {
       clearCart();
       router.push(`/checkout/success?order=${order.data.orderNumber}`);
     } catch (err) {
-      alert("Order failed. Please try again.");
+      toast.error("Order failed. Please try again.");
     } finally {
       setLoading(false);
     }
