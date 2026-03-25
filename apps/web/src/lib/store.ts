@@ -82,6 +82,42 @@ export const useCartStore = create<CartStore>()(
   ),
 );
 
+// Wishlist store
+interface WishlistItem {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  image: string;
+  brand: string;
+}
+
+interface WishlistState {
+  items: WishlistItem[];
+  addItem: (item: WishlistItem) => void;
+  removeItem: (id: string) => void;
+  isInWishlist: (id: string) => boolean;
+}
+
+export const useWishlistStore = create<WishlistState>()(
+  persist(
+    (set, get) => ({
+      items: [],
+      addItem: (item) =>
+        set((state) => {
+          if (state.items.find((i) => i.id === item.id)) return state;
+          return { items: [...state.items, item] };
+        }),
+      removeItem: (id) =>
+        set((state) => ({
+          items: state.items.filter((i) => i.id !== id),
+        })),
+      isInWishlist: (id) => get().items.some((i) => i.id === id),
+    }),
+    { name: "kicksmtaani-wishlist" },
+  ),
+);
+
 // Auth store
 interface AuthStore {
   user: any | null;

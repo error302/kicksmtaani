@@ -3,14 +3,20 @@
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getProduct } from "@/lib/api";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, useWishlistStore } from "@/lib/store";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Heart } from "lucide-react";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
   const { addItem, setCartOpen } = useCartStore();
+  const {
+    addItem: addToWishlist,
+    removeItem: removeFromWishlist,
+    isInWishlist,
+  } = useWishlistStore();
   const [selectedSize, setSelectedSize] = useState("");
 
   const { data: product, isLoading } = useQuery({
@@ -24,6 +30,24 @@ export default function ProductDetailPage() {
     return <div className="container mx-auto px-4 py-8">Product not found</div>;
 
   const p = product.data;
+  const isWishlisted = isInWishlist(p.id);
+
+  const handleWishlist = () => {
+    if (isWishlisted) {
+      removeFromWishlist(p.id);
+      toast.success("Removed from wishlist");
+    } else {
+      addToWishlist({
+        id: p.id,
+        name: p.name,
+        slug: slug,
+        price: Number(p.basePrice),
+        image: p.images?.[0] || "",
+        brand: p.brand || "",
+      });
+      toast.success("Added to wishlist");
+    }
+  };
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -59,7 +83,17 @@ export default function ProductDetailPage() {
         </div>
 
         <div>
-          <h1 className="text-2xl font-bold mb-2">{p.name}</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-2xl font-bold">{p.name}</h1>
+            <button
+              onClick={handleWishlist}
+              className="p-2 rounded-full border hover:bg-gray-100"
+            >
+              <Heart
+                className={`w-5 h-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`}
+              />
+            </button>
+          </div>
           <p className="text-gray-500 mb-4">{p.brand}</p>
           <p className="text-2xl text-primary font-bold mb-6">
             KES {Number(p.basePrice).toLocaleString()}
