@@ -191,7 +191,7 @@ export default function HomePage() {
               key={i}
               className="mx-8 text-white font-bold text-lg uppercase tracking-widest"
             >
-              SneakRoom ✦ Kenya's Sneaker Hub ✦
+              SneakRoom ✦ Kenya&apos;s Sneaker Hub ✦
             </span>
           ))}
         </div>
