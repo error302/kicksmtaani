@@ -1,4 +1,4 @@
-# KicksMtaani — SneakRoom
+# KicksMtaani — SneakeRoom
 
 Premium sneaker e-commerce platform for Kenya. Built with modern technologies to deliver a seamless shopping experience with M-Pesa and Flutterwave payment integrations.
 
