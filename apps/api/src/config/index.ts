@@ -36,6 +36,9 @@ const envSchema = z.object({
   SMTP_PORT: z.string().default(""),
   SMTP_USER: z.string().default(""),
   SMTP_PASS: z.string().default(""),
+  PAYPAL_CLIENT_ID: z.string().default(""),
+  PAYPAL_CLIENT_SECRET: z.string().default(""),
+  PAYPAL_CALLBACK_URL: z.string().default(""),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -56,6 +59,12 @@ export interface SmtpConfig {
   port: string;
   user: string;
   pass: string;
+}
+
+export interface PaypalConfig {
+  clientId: string;
+  clientSecret: string;
+  callbackUrl: string;
 }
 
 function loadEnv() {
@@ -92,5 +101,10 @@ export const config = {
     port: env.SMTP_PORT,
     user: env.SMTP_USER,
     pass: env.SMTP_PASS,
+  },
+  paypal: {
+    clientId: env.PAYPAL_CLIENT_ID,
+    clientSecret: env.PAYPAL_CLIENT_SECRET,
+    callbackUrl: env.PAYPAL_CALLBACK_URL,
   },
 };

@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import path from "path";
 import { errorHandler } from "./middleware/errorHandler";
 import { requestIdMiddleware } from "./middleware/requestId";
 import { generalRateLimiter } from "./middleware/rateLimit";
@@ -18,10 +19,19 @@ export const app: Application = express();
 
 // Security middleware
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://kicksmtaani.co.ke",
+      "https://www.kicksmtaani.co.ke",
+    ],
+    credentials: true,
+  }),
+);
 
-// Body parsing with size limit
-app.use(express.json({ limit: "10kb" }));
+// Body parsing with size limit (5mb for product payloads with image arrays)
+app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -40,6 +50,9 @@ app.use(
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
+
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // API Routes
 app.use("/api/v1/auth", authRoutes);

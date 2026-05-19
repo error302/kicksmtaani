@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@kicksmtaani/types", "@kicksmtaani/config"],
   images: {
-    domains: ["images.unsplash.com", "via.placeholder.com"],
+    domains: ["images.unsplash.com", "via.placeholder.com", "res.cloudinary.com"],
     formats: ["image/avif", "image/webp"],
   },
   headers: async () => [

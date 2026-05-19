@@ -1,6 +1,25 @@
 import { Request, Response } from "express";
 import { prisma } from "@kicksmtaani/db";
 
+export async function getUsers(_req: Request, res: Response) {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        fullName: true,
+        role: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json({ data: users });
+  } catch (error) {
+    res.status(500).json({ error: { message: "Failed to fetch users" } });
+  }
+}
+
 export async function getStats(_req: Request, res: Response) {
   try {
     const [totalOrders, totalRevenue, totalProducts, totalCustomers] =
@@ -92,5 +111,57 @@ export async function deleteProduct(req: Request, res: Response) {
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: { message: "Failed to delete product" } });
+  }
+}
+
+import { uploadToCloudinary } from "../../lib/cloudinary";
+
+export async function uploadImage(req: Request, res: Response) {
+  try {
+    const files = req.files as Express.Multer.File[];
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: { message: "No images provided" } });
+    }
+
+    const uploadPromises = files.map((file) => uploadToCloudinary(file.path));
+    const urls = await Promise.all(uploadPromises);
+
+    res.json({ data: urls });
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({ error: { message: "Image upload failed" } });
+  }
+}
+
+export async function createProduct(req: Request, res: Response) {
+  try {
+    const { name, slug, description, category, brand, basePrice, images, variants } = req.body;
+
+    const product = await prisma.product.create({
+      data: {
+        name,
+        slug,
+        description,
+        category,
+        brand,
+        basePrice,
+        images,
+        variants: {
+          create: variants.map((v: any) => ({
+            size: v.size,
+            color: v.color,
+            sku: v.sku,
+            stockQty: v.stockQty,
+            priceOverride: v.priceOverride,
+          })),
+        },
+      },
+      include: { variants: true },
+    });
+
+    res.status(201).json({ data: product });
+  } catch (error) {
+    console.error("Create product error:", error);
+    res.status(500).json({ error: { message: "Failed to create product" } });
   }
 }

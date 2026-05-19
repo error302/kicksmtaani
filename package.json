@@ -8,9 +8,9 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
-    "db:migrate": "pnpm --filter @kicksmtaani/db migrate",
-    "db:seed": "pnpm --filter @kicksmtaani/db seed",
-    "db:studio": "pnpm --filter @kicksmtaani/db studio",
+    "db:migrate": "pnpm --filter @kicksmtaani/db db:migrate",
+    "db:seed": "pnpm --filter @kicksmtaani/db db:seed",
+    "db:studio": "pnpm --filter @kicksmtaani/db db:studio",
     "prepare": "husky"
   },
   "devDependencies": {

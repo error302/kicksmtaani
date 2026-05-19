@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
-import { createOrder } from "@/lib/api";
+import { createOrder, initiatePayment } from "@/lib/api";
 import { toast } from "sonner";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, getTotal, clearCart } = useCartStore();
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("MPESA");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,9 +31,18 @@ export default function CheckoutPage() {
           city: formData.get("city"),
           notes: formData.get("notes"),
         },
-        paymentProvider: "MPESA",
+        paymentProvider: paymentMethod,
         phoneNumber: formData.get("phone"),
       });
+
+      if (paymentMethod === "PAYPAL") {
+        const result = await initiatePayment(order.data.id, paymentMethod, formData.get("phone"));
+        if (result.data?.approvalLink) {
+          clearCart();
+          window.location.href = result.data.approvalLink;
+          return;
+        }
+      }
 
       clearCart();
       router.push(`/checkout/success?order=${order.data.orderNumber}`);
@@ -116,15 +126,40 @@ export default function CheckoutPage() {
           </div>
 
           <h2 className="font-semibold text-lg pt-4">Payment Method</h2>
-          <div className="flex items-center gap-2 p-4 border rounded-lg">
-            <input
-              type="radio"
-              name="payment"
-              value="MPESA"
-              defaultChecked
-              className="text-primary"
-            />
-            <span>M-Pesa STK Push</span>
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+              <input
+                type="radio"
+                name="payment"
+                value="MPESA"
+                checked={paymentMethod === "MPESA"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="text-primary"
+              />
+              <span>M-Pesa STK Push</span>
+            </label>
+            <label className="flex items-center gap-2 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+              <input
+                type="radio"
+                name="payment"
+                value="FLUTTERWAVE"
+                checked={paymentMethod === "FLUTTERWAVE"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="text-primary"
+              />
+              <span>Flutterwave (Card/Mobile Money)</span>
+            </label>
+            <label className="flex items-center gap-2 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+              <input
+                type="radio"
+                name="payment"
+                value="PAYPAL"
+                checked={paymentMethod === "PAYPAL"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="text-primary"
+              />
+              <span>PayPal</span>
+            </label>
           </div>
 
           <button

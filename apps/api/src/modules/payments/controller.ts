@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "@kicksmtaani/db";
+import { verifyPayment as verifyPaypalOrder } from "./lib/paypal";
 
 export async function handleMpesaWebhook(req: Request, res: Response) {
   const { Body } = req.body;
@@ -79,6 +80,47 @@ export async function handleFlutterwaveWebhook(req: Request, res: Response) {
         }),
       ]);
     }
+  }
+
+  res.json({ received: true });
+}
+
+export async function handlePaypalWebhook(req: Request, res: Response) {
+  const { event_type, resource } = req.body;
+
+  if (event_type !== "CHECKOUT.ORDER.APPROVED" && event_type !== "CHECKOUT.ORDER.COMPLETED") {
+    return res.status(200).json({ received: true });
+  }
+
+  const paypalOrderId = resource?.id;
+
+  if (!paypalOrderId) {
+    return res.status(400).json({ error: "Missing PayPal order ID" });
+  }
+
+  try {
+    const order = await prisma.payment.findFirst({
+      where: {
+        providerRef: paypalOrderId,
+        status: "PENDING",
+      },
+      include: { order: true },
+    });
+
+    if (order) {
+      await prisma.$transaction([
+        prisma.payment.update({
+          where: { id: order.id },
+          data: { status: "SUCCESS", providerRef: paypalOrderId },
+        }),
+        prisma.order.update({
+          where: { id: order.orderId },
+          data: { status: "CONFIRMED" },
+        }),
+      ]);
+    }
+  } catch (err) {
+    console.error("PayPal webhook error:", err);
   }
 
   res.json({ received: true });

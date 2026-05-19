@@ -16,7 +16,7 @@ export const createOrderSchema = z.object({
     city: z.string().min(1),
     notes: z.string().optional(),
   }),
-  paymentProvider: z.enum(["MPESA", "STRIPE", "FLUTTERWAVE", "CASH"]),
+  paymentProvider: z.enum(["MPESA", "STRIPE", "FLUTTERWAVE", "PAYPAL", "CASH"]),
   phoneNumber: z.string().optional(),
 });
 

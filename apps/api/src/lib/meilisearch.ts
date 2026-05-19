@@ -50,17 +50,36 @@ export async function deleteProduct(productId: string) {
 
 export async function searchProducts(
   query: string,
-  options: { category?: string; brand?: string; limit?: number },
+  options: {
+    category?: string;
+    brand?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    sort?: string;
+    limit?: number;
+  },
 ) {
   const filters: string[] = ["isActive = true"];
 
   if (options.category) filters.push(`category = "${options.category}"`);
   if (options.brand) filters.push(`brand = "${options.brand}"`);
 
-  return client.index(PRODUCTS_INDEX).search(query, {
-    filter: filters.join(" AND "),
+  if (options.minPrice !== undefined)
+    filters.push(`basePrice >= ${options.minPrice}`);
+  if (options.maxPrice !== undefined)
+    filters.push(`basePrice <= ${options.maxPrice}`);
+
+  const searchParams: any = {
+    filter: filters.length > 0 ? filters.join(" AND ") : undefined,
     limit: options.limit || 20,
-  });
+  };
+
+  if (options.sort) {
+    // Expected format: "field:asc" or "field:desc"
+    searchParams.sort = [options.sort];
+  }
+
+  return client.index(PRODUCTS_INDEX).search(query, searchParams);
 }
 
 export { client as meilisearchClient };

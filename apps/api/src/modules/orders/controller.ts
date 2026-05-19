@@ -70,7 +70,7 @@ export const initiatePayment = asyncHandler(
     const order = await orderService.getOrder(id, user?.userId, isAdmin);
     const amount = Number(order.totalAmount);
 
-    const { initiateMpesaPayment, initiateFlutterwavePayment } =
+    const { initiateMpesaPayment, initiateFlutterwavePayment, initiatePaypalPayment } =
       await import("../payments/service.js");
 
     let result;
@@ -83,6 +83,8 @@ export const initiatePayment = asyncHandler(
         user?.email,
         amount,
       );
+    } else if (paymentProvider === "PAYPAL") {
+      result = await initiatePaypalPayment(id, user?.email, amount);
     } else {
       res.status(400).json({
         error: { message: "Invalid payment provider" },

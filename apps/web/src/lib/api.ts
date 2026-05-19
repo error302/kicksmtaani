@@ -22,6 +22,7 @@ export const getProduct = (slug: string) =>
   api.get(`/products/${slug}`).then((r) => r.data);
 export const searchProducts = (q: string, params?: any) =>
   api.get("/products/search", { params: { q, ...params } }).then((r) => r.data);
+export const getBrands = () => api.get("/products/brands").then((r) => r.data);
 
 export const login = (data: any) =>
   api.post("/auth/login", data).then((r) => r.data);
@@ -35,3 +36,13 @@ export const createOrder = (data: any) =>
 export const getOrders = () => api.get("/orders").then((r) => r.data);
 export const getOrder = (id: string) =>
   api.get(`/orders/${id}`).then((r) => r.data);
+
+export const uploadImages = (formData: FormData) =>
+  api
+    .post("/admin/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    .then((r) => r.data);
+
+export const createProduct = (data: any) =>
+  api.post("/admin/products", data).then((r) => r.data);
