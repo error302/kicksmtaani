@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { BrandDTO, ProductDTO, Category } from "@/lib/types";
 import { Hero } from "./hero";
 import { BrandStrip } from "./brand-strip";
@@ -13,6 +13,9 @@ import { ProductGrid } from "./product-grid";
 import { ProductModal } from "./product-modal";
 import { Newsletter } from "./newsletter";
 import { SiteFooter } from "./site-footer";
+import { WishlistSheet } from "./wishlist-sheet";
+import { RecentlyViewed } from "./recently-viewed";
+import { useWishlistStore } from "@/lib/wishlist-store";
 
 interface Props {
   brands: BrandDTO[];
@@ -20,43 +23,50 @@ interface Props {
 }
 
 export function HomeClient({ brands, products }: Props) {
-  // Filter state
   const [category, setCategory] = useState<Category | "ALL">("ALL");
   const [brandSlug, setBrandSlug] = useState<string>("");
   const [sort, setSort] = useState<string>("new");
   const [search, setSearch] = useState<string>("");
 
-  // Modal state
   const [activeProduct, setActiveProduct] = useState<ProductDTO | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  const trackView = useWishlistStore((s) => s.trackView);
 
   const brandOptions = useMemo(
     () => brands.map((b) => ({ slug: b.slug, name: b.name })),
     [brands]
   );
 
+  // Track view when a product is opened
+  useEffect(() => {
+    if (activeProduct) {
+      trackView(activeProduct.id);
+    }
+  }, [activeProduct, trackView]);
+
   const handleBrandSelect = (slug: string) => {
     setBrandSlug(slug);
-    // smooth scroll to grid
     setTimeout(() => {
-      document
-        .getElementById("product-grid")
-        ?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" });
     }, 50);
   };
 
   const handleCategorySelect = (c: Category | "ALL") => {
     setCategory(c);
     setTimeout(() => {
-      document
-        .getElementById("product-grid")
-        ?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" });
     }, 50);
   };
 
   const openProduct = (p: ProductDTO) => {
     setActiveProduct(p);
     setModalOpen(true);
+  };
+
+  const navigateToProduct = (p: ProductDTO) => {
+    setActiveProduct(p);
+    // modal stays open, key change forces remount of body
   };
 
   const clearFilters = () => {
@@ -72,7 +82,11 @@ export function HomeClient({ brands, products }: Props) {
       <BrandStrip />
       <TrustBar />
       <BrandShowcase brands={brands} onSelectBrand={handleBrandSelect} />
-      <Editorial onShopNow={() => document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" })} />
+      <Editorial
+        onShopNow={() =>
+          document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" })
+        }
+      />
       <CategoryStrip activeCategory={category} onSelect={handleCategorySelect} />
       <FilterBar
         category={category}
@@ -94,6 +108,7 @@ export function HomeClient({ brands, products }: Props) {
         onProductClick={openProduct}
         onClearFilters={clearFilters}
       />
+      <RecentlyViewed products={products} onProductClick={openProduct} />
       <Newsletter />
       <SiteFooter />
 
@@ -101,7 +116,10 @@ export function HomeClient({ brands, products }: Props) {
         product={activeProduct}
         open={modalOpen}
         onOpenChange={setModalOpen}
+        allProducts={products}
+        onNavigateProduct={navigateToProduct}
       />
+      <WishlistSheet products={products} onProductClick={openProduct} />
     </>
   );
 }

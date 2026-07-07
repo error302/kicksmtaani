@@ -1,8 +1,9 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { Star, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import type { ProductDTO } from "@/lib/types";
+import { useWishlistStore } from "@/lib/wishlist-store";
 
 interface Props {
   product: ProductDTO;
@@ -16,6 +17,8 @@ function formatKes(n: number) {
 
 export function ProductCard({ product, onClick, index = 0 }: Props) {
   const hasSale = product.compareAt && product.compareAt > product.basePrice;
+  const { toggle, has } = useWishlistStore();
+  const isWishlisted = has(product.id);
   const discount = hasSale
     ? Math.round(
         ((product.compareAt! - product.basePrice) / product.compareAt!) * 100
@@ -63,6 +66,24 @@ export function ProductCard({ product, onClick, index = 0 }: Props) {
             </span>
           )}
         </div>
+
+        {/* Wishlist heart */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            toggle(product.id);
+          }}
+          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          className={`absolute top-3 right-3 h-9 w-9 rounded-full flex items-center justify-center transition-all backdrop-blur-md ${
+            isWishlisted
+              ? "bg-[var(--kenyan-red)] text-white"
+              : "bg-background/70 text-foreground hover:bg-background"
+          }`}
+        >
+          <Heart
+            className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`}
+          />
+        </button>
 
         {/* Quick view hint */}
         <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">

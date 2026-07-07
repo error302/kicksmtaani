@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ShoppingBag, Search, Menu, X } from "lucide-react";
+import { ShoppingBag, Search, Menu, X, Heart } from "lucide-react";
 import { useCartStore } from "@/lib/store";
+import { useWishlistStore } from "@/lib/wishlist-store";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "./theme-toggle";
 import {
   Sheet,
   SheetContent,
@@ -27,6 +29,8 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const cartCount = useCartStore((s) => s.getTotalItems());
   const setCartOpen = useCartStore((s) => s.setCartOpen);
+  const wishlistCount = useWishlistStore((s) => s.productIds.length);
+  const setWishlistOpen = useWishlistStore((s) => s.setWishlistOpen);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -112,7 +116,7 @@ export function SiteHeader() {
           </Link>
 
           {/* Right — actions */}
-          <div className="flex items-center justify-end gap-1 sm:gap-2 flex-1 lg:flex-none">
+          <div className="flex items-center justify-end gap-0.5 sm:gap-1 flex-1 lg:flex-none">
             <Button
               variant="ghost"
               size="icon"
@@ -126,6 +130,21 @@ export function SiteHeader() {
             >
               <Search className="h-5 w-5" />
             </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={`Wishlist with ${wishlistCount} items`}
+              onClick={() => setWishlistOpen(true)}
+              className="relative"
+            >
+              <Heart className="h-5 w-5" />
+              {wishlistCount > 0 && (
+                <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 bg-foreground text-background text-[10px] font-semibold rounded-full flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Button>
+            <ThemeToggle />
             <Button
               variant="ghost"
               size="icon"
