@@ -1,0 +1,78 @@
+// KicksMtaani — Premium Sneaker Marketplace Schema
+// SQLite-compatible: arrays are stored as JSON strings
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Brand {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  logoUrl     String?
+  country     String?
+  description String?
+  featured    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  products    Product[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  brandId     String
+  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  category    String // MEN | WOMEN | KIDS | UNISEX
+  description String?
+  basePrice   Float // KES
+  compareAt   Float? // optional original price for sale display
+  images      String // JSON array of image URLs
+  sizes       String // JSON array of strings ["7","8","9"]
+  colors      String // JSON array of {name,hex}
+  rating      Float   @default(5)
+  reviewCount Int     @default(0)
+  inStock     Boolean @default(true)
+  isFeatured  Boolean @default(false)
+  isNew       Boolean @default(false)
+  tags        String? // JSON array of strings
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([brandId])
+  @@index([category])
+  @@index([isFeatured])
+  @@index([isNew])
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  orderNumber   String   @unique
+  email         String
+  phone         String
+  fullName      String
+  address       String
+  city          String
+  notes         String?
+  items         String // JSON array of items
+  subtotal      Float
+  shipping      Float
+  total         Float
+  status        String   @default("PENDING")
+  paymentMethod String   @default("MPESA")
+  createdAt     DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
