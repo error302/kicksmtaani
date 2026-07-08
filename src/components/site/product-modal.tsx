@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { DialogTitle } from "@radix-ui/react-dialog";
+import { DialogTitle, DialogDescription } from "@radix-ui/react-dialog";
 import {
   Star,
   Minus,
@@ -44,6 +44,9 @@ export function ProductModal({
         <DialogTitle className="sr-only">
           {product?.name ?? "Product details"}
         </DialogTitle>
+        <DialogDescription className="sr-only">
+          View product details, select size and color, and add to your bag.
+        </DialogDescription>
         {product && (
           <ProductModalBody
             key={product.id}

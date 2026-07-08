@@ -26,15 +26,14 @@ export function ProductCard({ product, onClick, index = 0 }: Props) {
     : 0;
 
   return (
-    <motion.button
-      onClick={onClick}
+    <motion.div
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, delay: Math.min((index % 8) * 0.04, 0.32) }}
       className="group text-left flex flex-col w-full"
     >
-      {/* Image */}
+      {/* Image area — clickable via a positioned button overlay, with wishlist heart as sibling */}
       <div className="relative aspect-[4/5] overflow-hidden bg-muted">
         <img
           src={product.images[0]}
@@ -54,7 +53,7 @@ export function ProductCard({ product, onClick, index = 0 }: Props) {
         )}
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none">
           {product.isNew && (
             <span className="bg-foreground text-background text-[10px] font-semibold uppercase tracking-wider px-2 py-1">
               New
@@ -67,14 +66,23 @@ export function ProductCard({ product, onClick, index = 0 }: Props) {
           )}
         </div>
 
-        {/* Wishlist heart */}
+        {/* Clickable overlay for the whole card (opens quick view) */}
         <button
+          type="button"
+          onClick={onClick}
+          aria-label={`View ${product.name}`}
+          className="absolute inset-0 h-full w-full z-[1]"
+        />
+
+        {/* Wishlist heart — sibling button (not nested inside the overlay button) */}
+        <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation();
             toggle(product.id);
           }}
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className={`absolute top-3 right-3 h-9 w-9 rounded-full flex items-center justify-center transition-all backdrop-blur-md ${
+          className={`absolute top-3 right-3 z-[2] h-9 w-9 rounded-full flex items-center justify-center transition-all backdrop-blur-md ${
             isWishlisted
               ? "bg-[var(--kenyan-red)] text-white"
               : "bg-background/70 text-foreground hover:bg-background"
@@ -86,15 +94,20 @@ export function ProductCard({ product, onClick, index = 0 }: Props) {
         </button>
 
         {/* Quick view hint */}
-        <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+        <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none">
           <div className="bg-background/95 backdrop-blur text-foreground text-center py-2.5 sm:py-3 text-xs sm:text-sm font-medium tracking-wide">
             Quick view
           </div>
         </div>
       </div>
 
-      {/* Info */}
-      <div className="pt-3 sm:pt-4 flex flex-col flex-1">
+      {/* Info — also clickable */}
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={`View ${product.name}`}
+        className="pt-3 sm:pt-4 flex flex-col flex-1 text-left cursor-pointer"
+      >
         <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-1.5">
           <span>{product.brandName}</span>
           <span className="flex items-center gap-1">
@@ -134,7 +147,7 @@ export function ProductCard({ product, onClick, index = 0 }: Props) {
             </span>
           )}
         </div>
-      </div>
-    </motion.button>
+      </button>
+    </motion.div>
   );
 }
