@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -11,14 +11,19 @@ import { useCartStore } from "@/lib/store";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ArrowLeft, Check, Truck } from "lucide-react";
 import { toast } from "sonner";
 import type { OrderPayload } from "@/lib/types";
+import type { SiteSettings } from "@/lib/settings";
 
-function formatKes(n: number) {
-  return "KES " + n.toLocaleString("en-KE");
+interface Props {
+  settings: SiteSettings;
+}
+
+function formatPrice(n: number, currency: string) {
+  return currency + " " + n.toLocaleString("en-KE");
 }
 
 type Step = "cart" | "checkout" | "success";
 
-export function CartSheet() {
+export function CartSheet({ settings: s }: Props) {
   const {
     items,
     isOpen,
@@ -31,6 +36,7 @@ export function CartSheet() {
     getSubtotal,
     getShipping,
     getTotal,
+    setShippingConfig,
   } = useCartStore();
 
   const [placing, setPlacing] = useState(false);
@@ -44,6 +50,13 @@ export function CartSheet() {
     notes: "",
     paymentMethod: "MPESA" as "MPESA" | "CARD" | "CASH",
   });
+
+  // Sync shipping config from settings into the cart store
+  useEffect(() => {
+    const threshold = Number(s.shippingFreeThreshold) || 15000;
+    const fee = Number(s.shippingFee) || 350;
+    setShippingConfig(threshold, fee);
+  }, [s.shippingFreeThreshold, s.shippingFee, setShippingConfig]);
 
   const step: Step = orderNo ? "success" : isCheckout ? "checkout" : "cart";
 
@@ -215,7 +228,7 @@ export function CartSheet() {
                             </button>
                           </div>
                           <span className="text-sm font-semibold">
-                            {formatKes(item.price * item.quantity)}
+                            {formatPrice(item.price * item.quantity, s.currency)}
                           </span>
                         </div>
                       </div>
@@ -229,22 +242,22 @@ export function CartSheet() {
               <div className="border-t border-border px-5 sm:px-6 py-4 space-y-3 safe-bottom">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">{formatKes(getSubtotal())}</span>
+                  <span className="font-medium">{formatPrice(getSubtotal(), s.currency)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
                   <span className="font-medium">
-                    {getShipping() === 0 ? "Free" : formatKes(getShipping())}
+                    {getShipping() === 0 ? "Free" : formatPrice(getShipping(), s.currency)}
                   </span>
                 </div>
                 {getShipping() > 0 && (
                   <p className="text-[11px] text-muted-foreground">
-                    Add {formatKes(15000 - getSubtotal())} more for free shipping.
+                    Add {formatPrice((Number(s.shippingFreeThreshold) || 15000) - getSubtotal(), s.currency)} more for free shipping.
                   </p>
                 )}
                 <div className="flex justify-between text-base pt-2 border-t border-border">
                   <span className="font-semibold">Total</span>
-                  <span className="font-semibold">{formatKes(getTotal())}</span>
+                  <span className="font-semibold">{formatPrice(getTotal(), s.currency)}</span>
                 </div>
                 <button
                   onClick={() => setCheckout(true)}
@@ -338,17 +351,17 @@ export function CartSheet() {
               <div className="bg-muted p-4 space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formatKes(getSubtotal())}</span>
+                  <span>{formatPrice(getSubtotal(), s.currency)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
                   <span>
-                    {getShipping() === 0 ? "Free" : formatKes(getShipping())}
+                    {getShipping() === 0 ? "Free" : formatPrice(getShipping(), s.currency)}
                   </span>
                 </div>
                 <div className="flex justify-between font-semibold pt-2 border-t border-border">
                   <span>Total</span>
-                  <span>{formatKes(getTotal())}</span>
+                  <span>{formatPrice(getTotal(), s.currency)}</span>
                 </div>
               </div>
 
@@ -357,7 +370,7 @@ export function CartSheet() {
                 disabled={placing}
                 className="w-full h-12 bg-foreground text-background text-sm font-semibold tracking-wide hover:bg-foreground/90 transition-colors inline-flex items-center justify-center gap-2 disabled:opacity-60 min-h-[48px]"
               >
-                {placing ? "Placing order..." : `Pay ${formatKes(getTotal())}`}
+                {placing ? "Placing order..." : `Pay ${formatPrice(getTotal(), s.currency)}`}
                 {!placing && <ArrowRight className="h-4 w-4" />}
               </button>
 

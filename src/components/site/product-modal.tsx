@@ -14,6 +14,7 @@ import {
   Heart,
 } from "lucide-react";
 import type { ProductDTO } from "@/lib/types";
+import type { SiteSettings } from "@/lib/settings";
 import { useCartStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/wishlist-store";
 import { toast } from "sonner";
@@ -25,10 +26,11 @@ interface Props {
   onOpenChange: (v: boolean) => void;
   allProducts: ProductDTO[];
   onNavigateProduct: (p: ProductDTO) => void;
+  settings: SiteSettings;
 }
 
-function formatKes(n: number) {
-  return "KES " + n.toLocaleString("en-KE");
+function formatPrice(n: number, currency: string) {
+  return currency + " " + n.toLocaleString("en-KE");
 }
 
 export function ProductModal({
@@ -37,6 +39,7 @@ export function ProductModal({
   onOpenChange,
   allProducts,
   onNavigateProduct,
+  settings,
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -54,6 +57,8 @@ export function ProductModal({
             allProducts={allProducts}
             onClose={() => onOpenChange(false)}
             onNavigateProduct={onNavigateProduct}
+            currency={settings.currency}
+            shippingFree={settings.shippingFreeThreshold}
           />
         )}
       </DialogContent>
@@ -66,11 +71,15 @@ function ProductModalBody({
   allProducts,
   onClose,
   onNavigateProduct,
+  currency,
+  shippingFree,
 }: {
   product: ProductDTO;
   allProducts: ProductDTO[];
   onClose: () => void;
   onNavigateProduct: (p: ProductDTO) => void;
+  currency: string;
+  shippingFree: string;
 }) {
   const [size, setSize] = useState<string | null>(null);
   const [color, setColor] = useState<string | null>(product.colors[0]?.name ?? null);
@@ -231,15 +240,15 @@ function ProductModalBody({
 
           <div className="flex items-baseline gap-3 mb-6">
             <span className="text-2xl font-semibold">
-              {formatKes(product.basePrice)}
+              {formatPrice(product.basePrice, currency)}
             </span>
             {hasSale && (
               <>
                 <span className="text-base text-muted-foreground line-through">
-                  {formatKes(product.compareAt!)}
+                  {formatPrice(product.compareAt!, currency)}
                 </span>
                 <span className="text-xs font-medium text-[var(--kenyan-red)] uppercase tracking-wider">
-                  Save {formatKes(product.compareAt! - product.basePrice)}
+                  Save {formatPrice(product.compareAt! - product.basePrice, currency)}
                 </span>
               </>
             )}
@@ -328,7 +337,7 @@ function ProductModalBody({
               className="flex-1 h-12 bg-foreground text-background text-sm font-semibold tracking-wide hover:bg-foreground/90 transition-colors inline-flex items-center justify-center gap-2 min-h-[48px]"
             >
               <ShoppingBag className="h-4 w-4" />
-              Add to bag — {formatKes(product.basePrice * qty)}
+              Add to bag — {formatPrice(product.basePrice * qty, currency)}
             </button>
           </div>
 
@@ -369,6 +378,7 @@ function ProductModalBody({
             title="You may also like"
             products={related}
             onProductClick={onNavigateProduct}
+            currency={currency}
           />
         </div>
       )}
@@ -397,7 +407,7 @@ function ProductModalBody({
           className="flex-1 h-12 bg-foreground text-background text-sm font-semibold tracking-wide inline-flex items-center justify-center gap-2 min-h-[48px]"
         >
           <ShoppingBag className="h-4 w-4" />
-          {formatKes(product.basePrice * qty)}
+          {formatPrice(product.basePrice * qty, currency)}
         </button>
       </div>
     </div>

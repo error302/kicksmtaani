@@ -9,9 +9,10 @@ import { ProductCard } from "./product-card";
 interface Props {
   products: ProductDTO[];
   onProductClick: (p: ProductDTO) => void;
+  currency?: string;
 }
 
-export function RecentlyViewed({ products, onProductClick }: Props) {
+export function RecentlyViewed({ products, onProductClick, currency = "KES" }: Props) {
   const recentIds = useWishlistStore((s) => s.recentIds);
   const recent = recentIds
     .map((id) => products.find((p) => p.id === id))
@@ -49,6 +50,7 @@ export function RecentlyViewed({ products, onProductClick }: Props) {
               key={p.id}
               product={p}
               index={i}
+              currency={currency}
               onClick={() => onProductClick(p)}
             />
           ))}

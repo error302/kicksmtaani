@@ -27,6 +27,7 @@ export async function getProductsByFilters(opts?: {
   if (opts?.brandSlug) {
     const brand = await db.brand.findUnique({ where: { slug: opts.brandSlug } });
     if (brand) where.brandId = brand.id;
+    else return []; // brand not found → no products
   }
   if (opts?.onlyFeatured) where.isFeatured = true;
   if (opts?.onlyNew) where.isNew = true;
@@ -54,8 +55,8 @@ export async function getProductsByFilters(opts?: {
     name: p.name,
     slug: p.slug,
     brandId: p.brandId,
-    brandName: p.brand.name,
-    brandSlug: p.brand.slug,
+    brandName: p.brand?.name ?? "Generic",
+    brandSlug: p.brand?.slug ?? "generic",
     category: p.category as any,
     description: p.description,
     basePrice: p.basePrice,

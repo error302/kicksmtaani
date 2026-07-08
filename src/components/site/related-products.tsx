@@ -8,9 +8,10 @@ interface Props {
   title: string;
   products: ProductDTO[];
   onProductClick: (p: ProductDTO) => void;
+  currency?: string;
 }
 
-export function RelatedProducts({ title, products, onProductClick }: Props) {
+export function RelatedProducts({ title, products, onProductClick, currency = "KES" }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   if (!products.length) return null;
@@ -62,7 +63,7 @@ export function RelatedProducts({ title, products, onProductClick }: Props) {
               {p.name}
             </p>
             <p className="text-xs font-semibold mt-1">
-              KES {p.basePrice.toLocaleString("en-KE")}
+              {currency} {p.basePrice.toLocaleString("en-KE")}
             </p>
           </button>
         ))}

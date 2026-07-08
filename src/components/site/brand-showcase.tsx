@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import type { BrandDTO } from "@/lib/types";
+import type { SiteSettings } from "@/lib/settings";
 
 interface Props {
   brands: BrandDTO[];
   onSelectBrand: (slug: string) => void;
+  settings: SiteSettings;
 }
 
-export function BrandShowcase({ brands, onSelectBrand }: Props) {
+export function BrandShowcase({ brands, onSelectBrand, settings: s }: Props) {
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
@@ -21,19 +23,17 @@ export function BrandShowcase({ brands, onSelectBrand }: Props) {
             <div className="flex items-center gap-3 mb-4">
               <span className="h-px w-8 bg-foreground/40" />
               <span className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-                The Brands
+                {s.brandsEyebrow}
               </span>
             </div>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tightest leading-[0.95]">
-              Every legend,
+              {s.brandsTitle1}
               <br />
-              <span className="text-muted-foreground">one marketplace.</span>
+              <span className="text-muted-foreground">{s.brandsTitle2}</span>
             </h2>
           </div>
           <p className="max-w-sm text-sm sm:text-base text-muted-foreground leading-relaxed">
-            From Beaverton to Herzogenaurach, Tokyo to Paris. The most coveted
-            sneaker brands in the world — authenticated, curated, and shipped
-            from Nairobi.
+            {s.brandsDescription}
           </p>
         </div>
 

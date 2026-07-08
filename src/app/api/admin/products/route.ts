@@ -16,6 +16,7 @@ export async function GET() {
     ok: true,
     products: products.map((p) => ({
       ...p,
+      brandName: p.brand?.name ?? "Generic",
       images: JSON.parse(p.images),
       sizes: JSON.parse(p.sizes),
       colors: JSON.parse(p.colors),
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
       data: {
         name: body.name,
         slug,
-        brandId: body.brandId,
+        brandId: body.brandId || null,
         category: body.category,
         description: body.description || null,
         basePrice: Number(body.basePrice),

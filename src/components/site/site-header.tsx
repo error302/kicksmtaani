@@ -7,6 +7,7 @@ import { useCartStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/wishlist-store";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
+import type { SiteSettings } from "@/lib/settings";
 import {
   Sheet,
   SheetContent,
@@ -24,7 +25,11 @@ const NAV = [
   { label: "Sale", href: "#sale" },
 ];
 
-export function SiteHeader() {
+interface Props {
+  settings: SiteSettings;
+}
+
+export function SiteHeader({ settings: s }: Props) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const cartCount = useCartStore((s) => s.getTotalItems());
@@ -65,7 +70,11 @@ export function SiteHeader() {
               <SheetContent side="left" className="w-[88vw] max-w-sm p-0">
                 <SheetHeader className="px-6 pt-6 pb-4 border-b">
                   <SheetTitle className="text-left text-xl tracking-display font-semibold">
-                    KicksMtaani
+                    {s.logoUrl ? (
+                      <img src={s.logoUrl} alt={`${s.siteName}${s.siteNameAccent}`} className="h-7 w-auto" />
+                    ) : (
+                      <span>{s.siteName}<span className="text-[var(--kenyan-red)]">{s.siteNameAccent}</span></span>
+                    )}
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col p-2">
@@ -81,9 +90,9 @@ export function SiteHeader() {
                   ))}
                 </nav>
                 <div className="px-6 py-4 border-t mt-2 text-xs text-muted-foreground">
-                  <p className="font-medium text-foreground mb-1">KicksMtaani</p>
-                  <p>Kenya&apos;s premium sneaker destination.</p>
-                  <p className="mt-2">Nairobi · Mombasa · Kisumu</p>
+                  <p className="font-medium text-foreground mb-1">{s.siteName}{s.siteNameAccent}</p>
+                  <p>{s.footerTagline}</p>
+                  <p className="mt-2">{s.contactAddress}</p>
                 </div>
               </SheetContent>
             </Sheet>
@@ -107,12 +116,16 @@ export function SiteHeader() {
           <Link
             href="/"
             className="flex-1 lg:flex-none text-center lg:text-left"
-            aria-label="KicksMtaani home"
+            aria-label={`${s.siteName}${s.siteNameAccent} home`}
           >
-            <span className="font-semibold text-lg sm:text-xl lg:text-2xl tracking-display inline-flex items-baseline">
-              Kicks
-              <span className="text-[var(--kenyan-red)]">Mtaani</span>
-            </span>
+            {s.logoUrl ? (
+              <img src={s.logoUrl} alt={`${s.siteName}${s.siteNameAccent}`} className="h-8 sm:h-9 lg:h-10 w-auto inline-block" />
+            ) : (
+              <span className="font-semibold text-lg sm:text-xl lg:text-2xl tracking-display inline-flex items-baseline">
+                {s.siteName}
+                <span className="text-[var(--kenyan-red)]">{s.siteNameAccent}</span>
+              </span>
+            )}
           </Link>
 
           {/* Right — actions */}

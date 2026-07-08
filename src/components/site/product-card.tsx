@@ -9,13 +9,14 @@ interface Props {
   product: ProductDTO;
   onClick: () => void;
   index?: number;
+  currency?: string;
 }
 
-function formatKes(n: number) {
-  return "KES " + n.toLocaleString("en-KE");
+function formatKes(n: number, currency: string = "KES") {
+  return currency + " " + n.toLocaleString("en-KE");
 }
 
-export function ProductCard({ product, onClick, index = 0 }: Props) {
+export function ProductCard({ product, onClick, index = 0, currency = "KES" }: Props) {
   const hasSale = product.compareAt && product.compareAt > product.basePrice;
   const { toggle, has } = useWishlistStore();
   const isWishlisted = has(product.id);
@@ -139,11 +140,11 @@ export function ProductCard({ product, onClick, index = 0 }: Props) {
         {/* Price */}
         <div className="mt-auto flex items-baseline gap-2">
           <span className="text-sm sm:text-base font-semibold text-foreground">
-            {formatKes(product.basePrice)}
+            {formatKes(product.basePrice, currency)}
           </span>
           {hasSale && (
             <span className="text-xs text-muted-foreground line-through">
-              {formatKes(product.compareAt!)}
+              {formatKes(product.compareAt!, currency)}
             </span>
           )}
         </div>

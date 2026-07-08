@@ -8,6 +8,8 @@ interface CartState {
   items: CartItem[];
   isOpen: boolean;
   isCheckout: boolean;
+  shippingThreshold?: number;
+  shippingFee?: number;
   // actions
   addItem: (item: CartItem) => void;
   removeItem: (productId: string, size: string, color: string) => void;
@@ -15,6 +17,7 @@ interface CartState {
   clear: () => void;
   setCartOpen: (open: boolean) => void;
   setCheckout: (v: boolean) => void;
+  setShippingConfig: (threshold: number, fee: number) => void;
   // selectors
   getTotalItems: () => number;
   getSubtotal: () => number;
@@ -74,8 +77,14 @@ export const useCartStore = create<CartState>()(
       getTotalItems: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
       getSubtotal: () =>
         get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
-      getShipping: () => (get().getSubtotal() > 15000 ? 0 : 350),
+      getShipping: () => {
+        const threshold = (get() as any).shippingThreshold ?? 15000;
+        const fee = (get() as any).shippingFee ?? 350;
+        return get().getSubtotal() >= threshold ? 0 : fee;
+      },
       getTotal: () => get().getSubtotal() + get().getShipping(),
+      setShippingConfig: (threshold: number, fee: number) =>
+        set({ shippingThreshold: threshold, shippingFee: fee } as any),
     }),
     { name: "kicksmtaani-cart" }
   )

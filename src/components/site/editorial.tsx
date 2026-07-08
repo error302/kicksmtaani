@@ -2,12 +2,14 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import type { SiteSettings } from "@/lib/settings";
 
 interface Props {
   onShopNow: () => void;
+  settings: SiteSettings;
 }
 
-export function Editorial({ onShopNow }: Props) {
+export function Editorial({ onShopNow, settings: s }: Props) {
   return (
     <section className="py-16 sm:py-24 lg:py-32 bg-foreground text-background overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -22,30 +24,25 @@ export function Editorial({ onShopNow }: Props) {
             <div className="flex items-center gap-3 mb-5">
               <span className="h-px w-8 bg-background/40" />
               <span className="text-xs font-medium uppercase tracking-[0.25em] text-background/60">
-                The KicksMtaani Standard
+                {s.editorialEyebrow}
               </span>
             </div>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tightest leading-[0.95] mb-6">
-              Not just shoes.
+              {s.editorialTitle1}
               <br />
-              <span className="text-background/50">A statement.</span>
+              <span className="text-background/50">{s.editorialTitle2}</span>
             </h2>
             <p className="text-base sm:text-lg text-background/70 leading-relaxed mb-5 max-w-lg">
-              KicksMtaani was born from a simple conviction: that Kenyan
-              sneakerheads deserve the same access to global heat as anyone,
-              anywhere — without compromise on authenticity, delivery, or service.
+              {s.editorialBody1}
             </p>
             <p className="text-base sm:text-lg text-background/70 leading-relaxed mb-8 max-w-lg">
-              Every pair in our catalogue is sourced through authorised channels,
-              inspected by hand, and shipped from Nairobi. From the icons of
-              Beaverton to the trail-ready technicality of the French Alps, we
-              carry the brands that matter.
+              {s.editorialBody2}
             </p>
             <button
               onClick={onShopNow}
               className="group inline-flex items-center gap-2 text-sm font-semibold tracking-wide border-b border-background pb-1 hover:border-[var(--kenyan-red)] hover:text-[var(--kenyan-red)] transition-colors"
             >
-              Explore the collection
+              {s.editorialCta}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
           </motion.div>
@@ -61,7 +58,7 @@ export function Editorial({ onShopNow }: Props) {
             <div className="aspect-[3/4] overflow-hidden bg-background/5">
               <img
                 src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=700&q=80"
-                alt="Sneaker editorial 1"
+                alt=""
                 loading="lazy"
                 className="h-full w-full object-cover hover:scale-105 transition-transform duration-700"
               />
@@ -69,7 +66,7 @@ export function Editorial({ onShopNow }: Props) {
             <div className="aspect-[3/4] overflow-hidden bg-background/5 mt-8 sm:mt-12">
               <img
                 src="https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=700&q=80"
-                alt="Sneaker editorial 2"
+                alt=""
                 loading="lazy"
                 className="h-full w-full object-cover hover:scale-105 transition-transform duration-700"
               />
@@ -77,7 +74,7 @@ export function Editorial({ onShopNow }: Props) {
             <div className="aspect-square overflow-hidden bg-background/5 -mt-4">
               <img
                 src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=700&q=80"
-                alt="Sneaker editorial 3"
+                alt=""
                 loading="lazy"
                 className="h-full w-full object-cover hover:scale-105 transition-transform duration-700"
               />
@@ -85,7 +82,7 @@ export function Editorial({ onShopNow }: Props) {
             <div className="aspect-square overflow-hidden bg-background/5 mt-4">
               <img
                 src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=700&q=80"
-                alt="Sneaker editorial 4"
+                alt=""
                 loading="lazy"
                 className="h-full w-full object-cover hover:scale-105 transition-transform duration-700"
               />

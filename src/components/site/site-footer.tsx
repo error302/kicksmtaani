@@ -2,6 +2,11 @@
 
 import Link from "next/link";
 import { Instagram, Twitter, Facebook, MapPin, Mail, Phone } from "lucide-react";
+import type { SiteSettings } from "@/lib/settings";
+
+interface Props {
+  settings: SiteSettings;
+}
 
 const SHOP = [
   { label: "New Arrivals", href: "#new" },
@@ -27,14 +32,18 @@ const LEGAL = [
   { label: "Authenticity Guarantee", href: "#" },
 ];
 
-export function SiteFooter() {
+export function SiteFooter({ settings: s }: Props) {
   const year = new Date().getFullYear();
+  const socials = [
+    { url: s.socialInstagram, Icon: Instagram },
+    { url: s.socialTwitter, Icon: Twitter },
+    { url: s.socialFacebook, Icon: Facebook },
+  ].filter((x) => x.url);
 
   return (
     <footer className="bg-background border-t border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 mb-12 sm:mb-16">
-          {/* Shop */}
           <div>
             <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
               Shop
@@ -42,10 +51,7 @@ export function SiteFooter() {
             <ul className="space-y-2.5">
               {SHOP.map((l) => (
                 <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
-                  >
+                  <Link href={l.href} className="text-sm text-foreground/80 hover:text-foreground transition-colors">
                     {l.label}
                   </Link>
                 </li>
@@ -53,7 +59,6 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Support */}
           <div>
             <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
               Support
@@ -61,10 +66,7 @@ export function SiteFooter() {
             <ul className="space-y-2.5">
               {SUPPORT.map((l) => (
                 <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
-                  >
+                  <Link href={l.href} className="text-sm text-foreground/80 hover:text-foreground transition-colors">
                     {l.label}
                   </Link>
                 </li>
@@ -72,7 +74,6 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Legal */}
           <div>
             <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
               Legal
@@ -80,10 +81,7 @@ export function SiteFooter() {
             <ul className="space-y-2.5">
               {LEGAL.map((l) => (
                 <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="text-sm text-foreground/80 hover:text-foreground transition-colors"
-                  >
+                  <Link href={l.href} className="text-sm text-foreground/80 hover:text-foreground transition-colors">
                     {l.label}
                   </Link>
                 </li>
@@ -91,7 +89,6 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
               Contact
@@ -99,45 +96,53 @@ export function SiteFooter() {
             <ul className="space-y-2.5 text-sm text-foreground/80">
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                <span>Nairobi · Mombasa · Kisumu, Kenya</span>
+                <span>{s.contactAddress}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <a href="mailto:hello@kicksmtaani.co.ke" className="hover:text-foreground transition-colors">
-                  hello@kicksmtaani.co.ke
+                <a href={`mailto:${s.contactEmail}`} className="hover:text-foreground transition-colors">
+                  {s.contactEmail}
                 </a>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <a href="tel:+254700000000" className="hover:text-foreground transition-colors">
-                  +254 700 000 000
+                <a href={`tel:${s.contactPhone}`} className="hover:text-foreground transition-colors">
+                  {s.contactPhone}
                 </a>
               </li>
             </ul>
-            <div className="flex gap-2 mt-5">
-              {[Instagram, Twitter, Facebook].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  aria-label="Social link"
-                  className="h-9 w-9 border border-border flex items-center justify-center hover:bg-foreground hover:text-background transition-colors"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
+            {socials.length > 0 && (
+              <div className="flex gap-2 mt-5">
+                {socials.map(({ url, Icon }, i) => (
+                  <a
+                    key={i}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Social link"
+                    className="h-9 w-9 border border-border flex items-center justify-center hover:bg-foreground hover:text-background transition-colors"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Big wordmark */}
         <div className="border-t border-border pt-8 sm:pt-10">
-          <p className="text-5xl sm:text-7xl lg:text-9xl font-semibold tracking-tightest leading-none mb-8">
-            Kicks
-            <span className="text-[var(--kenyan-red)]">Mtaani</span>
-          </p>
+          {s.logoUrl ? (
+            <img src={s.logoUrl} alt={`${s.siteName}${s.siteNameAccent}`} className="h-12 sm:h-16 lg:h-24 w-auto mb-8 object-contain" />
+          ) : (
+            <p className="text-5xl sm:text-7xl lg:text-9xl font-semibold tracking-tightest leading-none mb-8">
+              {s.siteName}
+              <span className="text-[var(--kenyan-red)]">{s.siteNameAccent}</span>
+            </p>
+          )}
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-xs text-muted-foreground">
-            <p>© {year} KicksMtaani. All rights reserved.</p>
+            <p>© {year} {s.footerCopyright}</p>
             <div className="flex flex-wrap items-center gap-4">
               <span className="inline-flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-[var(--kenyan-red)]" />
@@ -146,7 +151,7 @@ export function SiteFooter() {
               <span>·</span>
               <span>M-Pesa · Card · Cash on Delivery</span>
               <span>·</span>
-              <span>Free delivery in Nairobi & Mombasa</span>
+              <span>{s.contactAddress}</span>
             </div>
           </div>
         </div>

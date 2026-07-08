@@ -55,8 +55,8 @@ model Product {
   id          String   @id @default(cuid())
   name        String
   slug        String   @unique
-  brandId     String
-  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId     String?
+  brand       Brand?   @relation(fields: [brandId], references: [id], onDelete: Cascade)
   category    String // MEN | WOMEN | KIDS | UNISEX
   description String?
   basePrice   Float
@@ -116,4 +116,11 @@ model NewsletterSubscriber {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
+}
+
+// Key-value store for all site settings (wording, branding, contact, etc.)
+model SiteSetting {
+  key       String   @id
+  value     String   // plain string or JSON
+  updatedAt DateTime @updatedAt
 }

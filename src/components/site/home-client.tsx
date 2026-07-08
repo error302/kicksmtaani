@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { BrandDTO, ProductDTO, Category } from "@/lib/types";
+import type { SiteSettings } from "@/lib/settings";
 import { Hero } from "./hero";
 import { BrandStrip } from "./brand-strip";
 import { TrustBar } from "./trust-bar";
@@ -20,9 +21,10 @@ import { useWishlistStore } from "@/lib/wishlist-store";
 interface Props {
   brands: BrandDTO[];
   products: ProductDTO[];
+  settings: SiteSettings;
 }
 
-export function HomeClient({ brands, products }: Props) {
+export function HomeClient({ brands, products, settings }: Props) {
   const [category, setCategory] = useState<Category | "ALL">("ALL");
   const [brandSlug, setBrandSlug] = useState<string>("");
   const [sort, setSort] = useState<string>("new");
@@ -38,7 +40,6 @@ export function HomeClient({ brands, products }: Props) {
     [brands]
   );
 
-  // Track view when a product is opened
   useEffect(() => {
     if (activeProduct) {
       trackView(activeProduct.id);
@@ -66,7 +67,6 @@ export function HomeClient({ brands, products }: Props) {
 
   const navigateToProduct = (p: ProductDTO) => {
     setActiveProduct(p);
-    // modal stays open, key change forces remount of body
   };
 
   const clearFilters = () => {
@@ -78,11 +78,12 @@ export function HomeClient({ brands, products }: Props) {
 
   return (
     <>
-      <Hero />
+      <Hero settings={settings} />
       <BrandStrip />
-      <TrustBar />
-      <BrandShowcase brands={brands} onSelectBrand={handleBrandSelect} />
+      <TrustBar settings={settings} />
+      <BrandShowcase brands={brands} onSelectBrand={handleBrandSelect} settings={settings} />
       <Editorial
+        settings={settings}
         onShopNow={() =>
           document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" })
         }
@@ -107,10 +108,11 @@ export function HomeClient({ brands, products }: Props) {
         search={search}
         onProductClick={openProduct}
         onClearFilters={clearFilters}
+        settings={settings}
       />
-      <RecentlyViewed products={products} onProductClick={openProduct} />
-      <Newsletter />
-      <SiteFooter />
+      <RecentlyViewed products={products} onProductClick={openProduct} currency={settings.currency} />
+      <Newsletter settings={settings} />
+      <SiteFooter settings={settings} />
 
       <ProductModal
         product={activeProduct}
@@ -118,6 +120,7 @@ export function HomeClient({ brands, products }: Props) {
         onOpenChange={setModalOpen}
         allProducts={products}
         onNavigateProduct={navigateToProduct}
+        settings={settings}
       />
       <WishlistSheet products={products} onProductClick={openProduct} />
     </>

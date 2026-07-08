@@ -3,8 +3,13 @@
 import { useState } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { toast } from "sonner";
+import type { SiteSettings } from "@/lib/settings";
 
-export function Newsletter() {
+interface Props {
+  settings: SiteSettings;
+}
+
+export function Newsletter({ settings: s }: Props) {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,17 +48,16 @@ export function Newsletter() {
             <div className="flex items-center gap-3 mb-5">
               <span className="h-px w-8 bg-background/40" />
               <span className="text-xs font-medium uppercase tracking-[0.25em] text-background/60">
-                The Inner Circle
+                {s.newsletterEyebrow}
               </span>
             </div>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tightest leading-[0.95] mb-5">
-              First in line
+              {s.newsletterTitle1}
               <br />
-              <span className="text-background/50">for every drop.</span>
+              <span className="text-background/50">{s.newsletterTitle2}</span>
             </h2>
             <p className="text-base sm:text-lg text-background/70 max-w-md leading-relaxed">
-              Members get early access to releases, private restocks, and 10%
-              off the first order. No spam — only heat.
+              {s.newsletterBody}
             </p>
           </div>
 
@@ -94,7 +98,7 @@ export function Newsletter() {
                 </div>
                 <p className="text-xs text-background/50">
                   By subscribing, you agree to receive marketing emails from
-                  KicksMtaani. Unsubscribe anytime.
+                  {" "}{s.siteName}{s.siteNameAccent}. Unsubscribe anytime.
                 </p>
               </div>
             )}

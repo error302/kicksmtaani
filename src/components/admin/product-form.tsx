@@ -76,8 +76,8 @@ export function ProductForm({ product, mode }: ProductFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.brandId || !form.basePrice) {
-      toast.error("Name, brand, and price are required");
+    if (!form.name || !form.basePrice) {
+      toast.error("Name and price are required");
       return;
     }
     setSaving(true);
@@ -233,20 +233,22 @@ export function ProductForm({ product, mode }: ProductFormProps) {
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider mb-1.5 block">Brand *</label>
+                <label className="text-xs font-medium uppercase tracking-wider mb-1.5 block">Brand</label>
                 <select
                   value={form.brandId}
                   onChange={(e) => setForm({ ...form, brandId: e.target.value })}
                   className="w-full h-10 px-3 text-sm border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  required
                 >
-                  <option value="">Select brand...</option>
+                  <option value="">No brand (generic / local)</option>
                   {brands.map((b) => (
                     <option key={b.id} value={b.id}>
                       {b.name}
                     </option>
                   ))}
                 </select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Leave as &ldquo;No brand&rdquo; for generic or local shoes without a label name.
+                </p>
               </div>
               <div>
                 <label className="text-xs font-medium uppercase tracking-wider mb-1.5 block">Category *</label>

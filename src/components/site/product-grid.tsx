@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard } from "./product-card";
 import type { ProductDTO, Category } from "@/lib/types";
+import type { SiteSettings } from "@/lib/settings";
 
 interface Props {
   products: ProductDTO[];
@@ -13,10 +14,11 @@ interface Props {
   search: string;
   onProductClick: (p: ProductDTO) => void;
   onClearFilters: () => void;
+  settings: SiteSettings;
 }
 
-function formatKes(n: number) {
-  return "KES " + n.toLocaleString("en-KE");
+function formatPrice(n: number, currency: string) {
+  return currency + " " + n.toLocaleString("en-KE");
 }
 
 const SORT_LABELS: Record<string, string> = {
@@ -34,6 +36,7 @@ export function ProductGrid({
   search,
   onProductClick,
   onClearFilters,
+  settings,
 }: Props) {
   const filtered = useMemo(() => {
     let list = [...products];
@@ -173,6 +176,7 @@ export function ProductGrid({
                   key={p.id}
                   product={p}
                   index={i}
+                  currency={settings.currency}
                   onClick={() => onProductClick(p)}
                 />
               ))}
