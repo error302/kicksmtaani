@@ -39,6 +39,7 @@ server.log
 .env*.local
 .env.development
 .env.production
+# Note: .env.example IS committed (see below)
 
 # Database
 db/
