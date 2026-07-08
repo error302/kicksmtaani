@@ -1,12 +1,12 @@
 // KicksMtaani — Premium Sneaker Marketplace Schema
-// SQLite-compatible: arrays are stored as JSON strings
+// Compatible with PostgreSQL (Prisma Postgres, Neon, Supabase, Vercel Postgres)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

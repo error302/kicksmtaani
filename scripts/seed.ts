@@ -3,7 +3,6 @@
 // Run with: bun run db:seed
 
 import { PrismaClient } from "@prisma/client";
-import { readFileSync } from "fs";
 
 const db = new PrismaClient();
 
